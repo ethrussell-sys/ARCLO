@@ -1,11 +1,11 @@
 import { redirect } from 'next/navigation'
-import { stripe } from '@/lib/stripe'
+import { getStripe } from '@/lib/stripe'
 import { serverClient } from '@/lib/supabase'
 import { presignedDownloadUrl } from '@/lib/s3'
 import DownloadButton from './DownloadButton'
 
 async function getOrCreatePurchase(sessionId: string) {
-  const session = await stripe.checkout.sessions.retrieve(sessionId)
+  const session = await getStripe().checkout.sessions.retrieve(sessionId)
 
   if (session.payment_status !== 'paid') return null
 
