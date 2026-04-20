@@ -1,6 +1,7 @@
 import { getStripe } from '@/lib/stripe'
 import { serverClient } from '@/lib/supabase'
 import { presignedDownloadUrl } from '@/lib/s3'
+import { sendPurchaseConfirmation } from '@/lib/emails/send'
 
 export async function POST(request: Request) {
   const { paymentIntentId, email } = await request.json()
@@ -42,6 +43,13 @@ export async function POST(request: Request) {
       },
       { onConflict: 'stripe_payment_id', ignoreDuplicates: false }
     )
+
+  // Send email without blocking the response — download URL is the critical path
+  if (email) {
+    sendPurchaseConfirmation({ to: email, filmTitle: film.title, downloadUrl }).catch(
+      (err) => console.error('Purchase email failed:', err)
+    )
+  }
 
   return Response.json({ downloadUrl, filmTitle: film.title })
 }

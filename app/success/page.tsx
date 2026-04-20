@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { getStripe } from '@/lib/stripe'
 import { serverClient } from '@/lib/supabase'
 import { presignedDownloadUrl } from '@/lib/s3'
+import { sendPurchaseConfirmation } from '@/lib/emails/send'
 import DownloadButton from './DownloadButton'
 
 async function getOrCreatePurchase(sessionId: string) {
@@ -11,6 +12,7 @@ async function getOrCreatePurchase(sessionId: string) {
 
   const filmId = session.metadata?.filmId
   const email = session.customer_details?.email
+  const paymentIntentId = session.payment_intent as string
 
   if (!filmId || !email) return null
 
@@ -22,22 +24,36 @@ async function getOrCreatePurchase(sessionId: string) {
 
   if (!film) return null
 
+  // Check if this purchase already exists to avoid resending the email on refresh
+  const { data: existing } = await serverClient()
+    .from('purchases')
+    .select('id')
+    .eq('stripe_payment_id', paymentIntentId)
+    .single()
+
+  const isNew = !existing
+
   const downloadUrl = await presignedDownloadUrl(film.file_key)
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
 
-  // Upsert so page refreshes don't create duplicate records
   await serverClient()
     .from('purchases')
     .upsert(
       {
         film_id: film.id,
         email,
-        stripe_payment_id: session.payment_intent as string,
+        stripe_payment_id: paymentIntentId,
         download_url: downloadUrl,
         expires_at: expiresAt,
       },
       { onConflict: 'stripe_payment_id', ignoreDuplicates: false }
     )
+
+  if (isNew) {
+    sendPurchaseConfirmation({ to: email, filmTitle: film.title, downloadUrl }).catch(
+      (err) => console.error('Purchase email failed:', err)
+    )
+  }
 
   return { film, email, downloadUrl }
 }
@@ -67,7 +83,6 @@ export default async function SuccessPage(props: {
   return (
     <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-5">
       <div className="w-full max-w-sm flex flex-col items-center gap-8 text-center">
-        {/* Checkmark */}
         <div
           className="w-16 h-16 rounded-full flex items-center justify-center"
           style={{ backgroundColor: '#0A84FF' }}
@@ -77,7 +92,6 @@ export default async function SuccessPage(props: {
           </svg>
         </div>
 
-        {/* Confirmation copy */}
         <div className="flex flex-col gap-2">
           <h1 className="text-2xl font-bold">You own it.</h1>
           <p className="text-neutral-400 text-sm leading-relaxed">
@@ -87,7 +101,6 @@ export default async function SuccessPage(props: {
           </p>
         </div>
 
-        {/* Download button */}
         <DownloadButton url={downloadUrl} title={film.title} />
 
         <p className="text-neutral-600 text-xs">
