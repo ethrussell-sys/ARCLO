@@ -2,7 +2,8 @@ import * as React from 'react'
 import { getResend } from '@/lib/resend'
 import { PurchaseConfirmationEmail } from '@/lib/emails/PurchaseConfirmation'
 
-const FROM = 'ARCLO <purchases@arclo.com>'
+// const FROM = 'ARCLO <purchases@arclo.com>' // restore once arclo.com is verified in Resend
+const FROM = 'ARCLO <onboarding@resend.dev>'
 
 export async function sendPurchaseConfirmation({
   to,
