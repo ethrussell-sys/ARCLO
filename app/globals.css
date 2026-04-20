@@ -43,3 +43,42 @@ body {
 .film-card:hover {
   transform: scale(1.02);
 }
+
+/* Homepage hero */
+.hero-section {
+  min-height: 100vh;
+}
+@media (min-width: 1024px) {
+  .hero-section {
+    min-height: 60vh;
+  }
+}
+
+.hero-text {
+  padding-left: 24px;
+  padding-right: 24px;
+}
+@media (min-width: 1024px) {
+  .hero-text {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+}
+
+.hero-strip {
+  padding-left: 24px;
+  padding-right: 0;
+}
+
+.explore-link {
+  display: inline-block;
+  color: #fff;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+.explore-link:hover {
+  opacity: 1;
+}
