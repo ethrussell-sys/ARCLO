@@ -1,136 +1,133 @@
 import Link from 'next/link'
 import { serverClient } from '@/lib/supabase'
 
-async function getFeaturedFilms() {
+async function getLiveFilms() {
   const { data } = await serverClient()
     .from('films')
-    .select('id, title, director, year, thumbnail_url')
+    .select('id, thumbnail_url, title')
+    .eq('status', 'live')
     .order('created_at', { ascending: false })
-    .limit(6)
+    .limit(12)
   return data ?? []
 }
 
-const stats = [
-  { number: '73%', label: 'of Sundance films never find distribution' },
-  { number: '32%', label: 'drop in streaming subscriptions' },
-  { number: '37%', label: 'of social users buy what they discover' },
-]
-
 export default async function HomePage() {
-  const films = await getFeaturedFilms()
+  const films = await getLiveFilms()
 
   return (
-    <main className="bg-black text-white">
+    <main style={{ backgroundColor: '#000', color: '#fff' }}>
 
       {/* ── Hero ── */}
-      <section className="min-h-screen flex flex-col justify-between px-6 py-10 md:px-12 md:py-14">
-        <span
-          className="text-sm tracking-[0.25em] uppercase text-neutral-500"
-          style={{ fontFamily: 'var(--font-geist-sans)' }}
-        >
+      <section style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '40px 0 0',
+      }}>
+
+        {/* Wordmark */}
+        <span style={{
+          padding: '0 24px',
+          color: '#525252',
+          fontSize: '12px',
+          letterSpacing: '0.25em',
+          textTransform: 'uppercase',
+          fontFamily: 'var(--font-geist-sans)',
+        }}>
           ARCLO
         </span>
 
-        <div className="flex flex-col gap-8 max-w-4xl">
+        {/* Headline + subtext + CTA — vertically centered */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 24px' }}>
           <h1
-            className="text-[13vw] md:text-[9vw] leading-none tracking-tight uppercase"
-            style={{ fontFamily: 'var(--font-bebas)' }}
+            style={{
+              fontFamily: 'var(--font-bebas)',
+              fontSize: 'clamp(3.5rem, 14vw, 8rem)',
+              lineHeight: 0.95,
+              textTransform: 'uppercase',
+              letterSpacing: '-0.5px',
+              margin: '0 0 24px',
+              animation: 'fade-up 0.8s ease-out both',
+            }}
           >
             Own the films<br />that matter.
           </h1>
-          <p className="text-neutral-400 text-lg md:text-xl leading-relaxed max-w-sm">
-            One tap.&nbsp; $1.99.&nbsp; Yours forever.
+
+          <p style={{
+            color: '#737373',
+            fontSize: '15px',
+            lineHeight: 1.6,
+            margin: '0 0 32px',
+            animation: 'fade-up 0.8s ease-out 0.15s both',
+          }}>
+            One tap.&nbsp;&nbsp;$1.99.&nbsp;&nbsp;Yours forever.
           </p>
+
           <a
             href="#films"
-            className="inline-flex items-center justify-center self-start px-8 py-4 rounded-2xl text-white font-semibold text-base tracking-wide transition-opacity hover:opacity-90 active:scale-95"
-            style={{ backgroundColor: '#0A84FF' }}
+            style={{
+              display: 'inline-block',
+              color: '#fff',
+              fontSize: '14px',
+              letterSpacing: '0.1em',
+              textDecoration: 'none',
+              animation: 'fade-up 0.8s ease-out 0.3s both',
+            }}
           >
-            See what&apos;s here
+            Explore films →
           </a>
         </div>
 
-        <div className="text-neutral-700 text-xs tracking-widest uppercase">
-          Cinema for everyone
-        </div>
-      </section>
-
-      {/* ── Stats ── */}
-      <section className="px-6 py-24 md:px-12 border-t border-neutral-900">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-8 max-w-5xl">
-          {stats.map(({ number, label }) => (
-            <div key={number} className="flex flex-col gap-3">
-              <span
-                className="text-7xl md:text-8xl leading-none"
-                style={{ fontFamily: 'var(--font-bebas)', color: '#0A84FF' }}
-              >
-                {number}
-              </span>
-              <span className="text-neutral-500 text-sm leading-relaxed max-w-[18ch]">
-                {label}
-              </span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Featured Films ── */}
-      <section id="films" className="px-6 py-24 md:px-12 border-t border-neutral-900">
-        <h2
-          className="text-5xl md:text-6xl uppercase mb-16 tracking-tight"
-          style={{ fontFamily: 'var(--font-bebas)' }}
-        >
-          Featured Films
-        </h2>
-
-        {films.length === 0 ? (
-          <p className="text-neutral-600 text-sm">Films coming soon.</p>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+        {/* Film strip */}
+        {films.length > 0 && (
+          <div
+            id="films"
+            className="film-strip"
+            style={{
+              display: 'flex',
+              gap: '10px',
+              overflowX: 'auto',
+              padding: '48px 24px 48px',
+              animation: 'fade-up 0.8s ease-out 0.45s both',
+            }}
+          >
             {films.map((film) => (
               <Link
                 key={film.id}
                 href={`/films/${film.id}`}
-                className="group flex flex-col gap-3"
+                className="film-card"
+                style={{
+                  flexShrink: 0,
+                  width: '200px',
+                  height: '280px',
+                  borderRadius: '8px',
+                  overflow: 'hidden',
+                  backgroundColor: '#111',
+                  display: 'block',
+                }}
               >
-                <div className="aspect-video w-full bg-neutral-900 overflow-hidden rounded-lg">
-                  {film.thumbnail_url ? (
-                    <img
-                      src={film.thumbnail_url}
-                      alt={film.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <span className="text-neutral-700 text-xs tracking-widest uppercase">No image</span>
-                    </div>
-                  )}
-                </div>
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-white font-medium text-sm leading-snug group-hover:text-[#0A84FF] transition-colors">
-                    {film.title}
-                  </span>
-                  {film.director && (
-                    <span className="text-neutral-500 text-xs">{film.director}</span>
-                  )}
-                </div>
+                {film.thumbnail_url && (
+                  <img
+                    src={film.thumbnail_url}
+                    alt={film.title}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                  />
+                )}
               </Link>
             ))}
           </div>
         )}
+
       </section>
 
       {/* ── Footer ── */}
-      <footer className="px-6 py-16 md:px-12 border-t border-neutral-900 flex flex-col gap-2">
-        <span
-          className="text-3xl uppercase tracking-tight"
-          style={{ fontFamily: 'var(--font-bebas)' }}
-        >
+      <footer style={{ padding: '48px 24px', borderTop: '1px solid #111' }}>
+        <span style={{ fontFamily: 'var(--font-bebas)', fontSize: '28px', textTransform: 'uppercase', letterSpacing: '-0.5px' }}>
           ARCLO
         </span>
-        <span className="text-neutral-600 text-xs tracking-widest uppercase">
+        <p style={{ color: '#404040', fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', margin: '8px 0 0' }}>
           The films that matter.
-        </span>
+        </p>
       </footer>
 
     </main>
