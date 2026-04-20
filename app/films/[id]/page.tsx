@@ -25,67 +25,63 @@ export default async function FilmPage(props: {
   const embedUrl = film.trailer_url ? youtubeEmbedUrl(film.trailer_url) : null
 
   return (
-    <main className="min-h-screen bg-black text-white flex flex-col pb-36">
+    <main style={{ minHeight: '100vh', backgroundColor: '#000', color: '#fff', display: 'flex', flexDirection: 'column', paddingBottom: '144px' }}>
 
       {/* ── Hero: thumbnail + gradient overlay + title ── */}
-      <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
-        {film.thumbnail_url ? (
+      {/* padding-top: 56.25% forces 16:9 height without aspect-ratio,
+          which collapses when all children are position:absolute */}
+      <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%', backgroundColor: '#0a0a0a' }}>
+
+        {film.thumbnail_url && (
           <img
             src={film.thumbnail_url}
             alt={film.title}
-            className="absolute inset-0 w-full h-full object-cover"
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
           />
-        ) : (
-          <div className="absolute inset-0 bg-neutral-950" />
         )}
 
         {/* Gradient: transparent top → solid black bottom */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: 'linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.7) 65%, #000000 100%)',
-          }}
-        />
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.75) 65%, #000 100%)',
+        }} />
 
-        {/* Title overlay */}
-        <div className="absolute bottom-0 left-0 right-0 px-6 md:px-12 pb-6 flex flex-col gap-1">
-          <h1
-            className="uppercase leading-none tracking-tight"
-            style={{
-              fontFamily: 'var(--font-bebas)',
-              fontSize: 'clamp(2.8rem, 9vw, 5rem)',
-            }}
-          >
+        {/* Title + meta overlaid on gradient */}
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 24px 24px' }}>
+          <h1 style={{
+            fontFamily: 'var(--font-bebas)',
+            fontSize: 'clamp(2.8rem, 9vw, 5rem)',
+            lineHeight: 1,
+            textTransform: 'uppercase',
+            margin: 0,
+            letterSpacing: '-0.5px',
+          }}>
             {film.title}
           </h1>
           {(film.director || film.year) && (
-            <p style={{ color: '#a3a3a3', fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
-              {[film.director, film.year].filter(Boolean).join('\u2003·\u2003')}
+            <p style={{ color: '#a3a3a3', fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', margin: '6px 0 0' }}>
+              {[film.director, film.year].filter(Boolean).join('   ·   ')}
             </p>
           )}
         </div>
       </div>
 
-      {/* ── Body ── */}
-      <div className="flex flex-col gap-10 px-6 md:px-12 pt-8 w-full max-w-2xl">
+      {/* ── Body: solid black, below the hero ── */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '40px', padding: '32px 24px 0' }}>
 
-        {/* Description */}
         {film.description && (
-          <p style={{ color: '#e5e5e5', fontSize: '17px', lineHeight: '1.7', letterSpacing: '-0.01em' }}>
+          <p style={{ color: '#e5e5e5', fontSize: '17px', lineHeight: 1.7, letterSpacing: '-0.01em', margin: 0 }}>
             {film.description}
           </p>
         )}
 
-        {/* Trailer */}
         {embedUrl && (
-          <div
-            className="w-full overflow-hidden bg-neutral-950"
-            style={{ borderRadius: '16px', aspectRatio: '16/9' }}
-          >
+          <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%', borderRadius: '16px', overflow: 'hidden', backgroundColor: '#0a0a0a' }}>
             <iframe
               src={embedUrl}
               title={`${film.title} — trailer`}
-              className="w-full h-full"
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none' }}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
@@ -95,12 +91,14 @@ export default async function FilmPage(props: {
       </div>
 
       {/* ── Buy button fixed to bottom ── */}
-      <div
-        className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-6"
-        style={{
-          background: 'linear-gradient(to top, #000000 60%, transparent)',
-        }}
-      >
+      <div style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        padding: '24px 24px 32px',
+        background: 'linear-gradient(to top, #000 60%, transparent)',
+      }}>
         <BuyButton filmId={film.id} price={film.price} title={film.title} />
       </div>
 
