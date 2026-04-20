@@ -48,7 +48,7 @@ export default async function FilmPage(props: {
         />
 
         {/* Title overlay */}
-        <div className="absolute bottom-0 left-0 right-0 px-5 pb-5 flex flex-col gap-1">
+        <div className="absolute bottom-0 left-0 right-0 px-6 md:px-12 pb-6 flex flex-col gap-1">
           <h1
             className="uppercase leading-none tracking-tight"
             style={{
@@ -67,7 +67,7 @@ export default async function FilmPage(props: {
       </div>
 
       {/* ── Body ── */}
-      <div className="flex flex-col gap-10 px-5 pt-8 max-w-xl">
+      <div className="flex flex-col gap-10 px-6 md:px-12 pt-8 w-full max-w-2xl">
 
         {/* Description */}
         {film.description && (
