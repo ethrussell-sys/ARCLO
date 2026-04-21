@@ -25,7 +25,7 @@ export default async function FilmPage(props: {
   const embedUrl = film.trailer_url ? youtubeEmbedUrl(film.trailer_url) : null
 
   return (
-    <main style={{ minHeight: '100vh', backgroundColor: '#000', color: '#fff', display: 'flex', flexDirection: 'column', paddingBottom: '120px' }}>
+    <main style={{ minHeight: '100vh', backgroundColor: '#000', color: '#fff', display: 'flex', flexDirection: 'column', paddingBottom: '160px' }}>
 
       {/* ── Hero ── */}
       <div className="film-hero" style={{ position: 'relative', width: '100%', backgroundColor: '#0a0a0a', flexShrink: 0 }}>
@@ -83,6 +83,9 @@ export default async function FilmPage(props: {
             lineHeight: 1.7,
             maxWidth: '640px',
             margin: 0,
+            overflow: 'visible',
+            whiteSpace: 'normal',
+            wordWrap: 'break-word',
           }}>
             {film.description}
           </p>
