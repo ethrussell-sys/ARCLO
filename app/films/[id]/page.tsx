@@ -25,12 +25,10 @@ export default async function FilmPage(props: {
   const embedUrl = film.trailer_url ? youtubeEmbedUrl(film.trailer_url) : null
 
   return (
-    <main style={{ minHeight: '100vh', backgroundColor: '#000', color: '#fff', display: 'flex', flexDirection: 'column', paddingBottom: '144px' }}>
+    <main style={{ minHeight: '100vh', backgroundColor: '#000', color: '#fff', display: 'flex', flexDirection: 'column', paddingBottom: '120px' }}>
 
-      {/* ── Hero: thumbnail + gradient overlay + title ── */}
-      {/* padding-top: 56.25% forces 16:9 height without aspect-ratio,
-          which collapses when all children are position:absolute */}
-      <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%', backgroundColor: '#0a0a0a' }}>
+      {/* ── Hero ── */}
+      <div className="film-hero" style={{ position: 'relative', width: '100%', backgroundColor: '#0a0a0a', flexShrink: 0 }}>
 
         {film.thumbnail_url && (
           <img
@@ -40,51 +38,67 @@ export default async function FilmPage(props: {
           />
         )}
 
-        {/* Gradient: transparent top → solid black bottom */}
+        {/* Gradient: transparent top → rgba(0,0,0,0.85) bottom 40% */}
         <div style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.75) 65%, #000 100%)',
+          background: 'linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.85) 100%)',
         }} />
 
-        {/* Title + meta overlaid on gradient */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 24px 24px' }}>
+        {/* Title + meta */}
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, paddingTop: 0, paddingBottom: '8px', paddingLeft: '32px', paddingRight: '32px' }}>
           <h1 style={{
             fontFamily: 'var(--font-bebas)',
-            fontSize: 'clamp(2.8rem, 9vw, 5rem)',
+            fontSize: 'clamp(3rem, 8vw, 6rem)',
             lineHeight: 1,
             textTransform: 'uppercase',
             margin: 0,
             letterSpacing: '-0.5px',
+            color: '#fff',
           }}>
             {film.title}
           </h1>
-          {(film.director || film.year) && (
-            <p style={{ color: '#a3a3a3', fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', margin: '6px 0 0' }}>
-              {[film.director, film.year].filter(Boolean).join('   ·   ')}
+          {(film.director || film.year || film.price) && (
+            <p style={{
+              color: 'rgba(255,255,255,0.5)',
+              fontSize: '11px',
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+              margin: '8px 0 0',
+            }}>
+              {[film.director, film.year, film.price != null ? `$${Number(film.price).toFixed(2)}` : null].filter(Boolean).join('   ·   ')}
             </p>
           )}
         </div>
       </div>
 
-      {/* ── Body: solid black, below the hero ── */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '40px', padding: '32px 24px 0' }}>
+      {/* ── Body ── */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '40px', paddingTop: '32px', paddingLeft: '32px', paddingRight: '32px', paddingBottom: 0 }}>
 
         {film.description && (
-          <p style={{ color: '#e5e5e5', fontSize: '17px', lineHeight: 1.7, letterSpacing: '-0.01em', margin: 0 }}>
+          <p style={{
+            color: '#fff',
+            opacity: 0.85,
+            fontSize: '17px',
+            lineHeight: 1.7,
+            maxWidth: '640px',
+            margin: 0,
+          }}>
             {film.description}
           </p>
         )}
 
         {embedUrl && (
-          <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%', borderRadius: '16px', overflow: 'hidden', backgroundColor: '#0a0a0a' }}>
-            <iframe
-              src={embedUrl}
-              title={`${film.title} — trailer`}
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none' }}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
+          <div style={{ marginLeft: '32px', marginRight: '32px' }}>
+            <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%', borderRadius: '12px', overflow: 'hidden', backgroundColor: '#0a0a0a' }}>
+              <iframe
+                src={embedUrl}
+                title={`${film.title} — trailer`}
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none' }}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
           </div>
         )}
 

@@ -95,27 +95,29 @@ export default async function HomePage() {
                     width: '200px',
                     height: '280px',
                     borderRadius: '8px',
-                    overflow: 'hidden',
                     backgroundColor: '#111',
                     display: 'block',
                     position: 'relative',
                   }}
                 >
-                  {film.thumbnail_url && (
-                    <img
-                      src={film.thumbnail_url}
-                      alt={film.title}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                    />
-                  )}
+                  <div style={{ position: 'absolute', inset: 0, borderRadius: '8px', overflow: 'hidden' }}>
+                    {film.thumbnail_url && (
+                      <img
+                        src={film.thumbnail_url}
+                        alt={film.title}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                      />
+                    )}
+                  </div>
                   <div style={{
                     position: 'absolute',
                     bottom: 0,
                     left: 0,
                     right: 0,
                     height: '40%',
+                    borderRadius: '0 0 8px 8px',
                     background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)',
-                    zIndex: 1,
+                    zIndex: 2,
                   }}>
                     <div style={{ position: 'absolute', bottom: '12px', left: '12px', right: '12px' }}>
                       <span style={{

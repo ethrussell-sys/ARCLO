@@ -44,6 +44,16 @@ body {
   transform: scale(1.02);
 }
 
+/* Film page hero */
+.film-hero {
+  height: 70vh;
+}
+@media (min-width: 1024px) {
+  .film-hero {
+    height: 80vh;
+  }
+}
+
 /* Homepage hero */
 .hero-section {
   min-height: 100vh;
