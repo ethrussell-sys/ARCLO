@@ -110,20 +110,21 @@ export default async function SuccessPage(props: {
 
         <ShareSection watchUrl={`${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/watch/${slug}`} />
 
-        <div style={{ textAlign: 'center', paddingTop: '60px', paddingBottom: '40px' }}>
-          <a
-            href="/"
-            style={{
-              color: 'rgba(255,255,255,0.35)',
-              fontSize: '13px',
-              letterSpacing: '0.05em',
-              textDecoration: 'none',
-              textTransform: 'uppercase',
-            }}
-          >
-            Explore more films
-          </a>
-        </div>
+        <a
+          href="/"
+          style={{
+            color: 'rgba(255,255,255,0.25)',
+            fontSize: '12px',
+            letterSpacing: '0.08em',
+            textDecoration: 'none',
+            textTransform: 'uppercase',
+            display: 'block',
+            textAlign: 'center',
+            marginTop: '60px',
+          }}
+        >
+          Explore more films
+        </a>
       </div>
 
     </main>
