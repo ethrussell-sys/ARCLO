@@ -245,6 +245,21 @@ export default async function SuccessPage(props: {
         </div>
       )}
 
+      <div style={{ textAlign: 'center', paddingTop: '60px', paddingBottom: '40px' }}>
+        <a
+          href="/"
+          style={{
+            color: 'rgba(255,255,255,0.35)',
+            fontSize: '13px',
+            letterSpacing: '0.05em',
+            textDecoration: 'none',
+            textTransform: 'uppercase',
+          }}
+        >
+          Explore more films
+        </a>
+      </div>
+
     </main>
   )
 }
