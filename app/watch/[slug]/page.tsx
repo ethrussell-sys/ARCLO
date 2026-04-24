@@ -105,27 +105,27 @@ export default async function WatchPage(props: {
           </div>
         )}
 
-        {/* Buy button */}
-        <div style={{ width: '100%' }}>
-          <BuyButton filmId={film.id} price={film.price} title={film.title} />
+        {/* Buy button → note → share: 40px gaps */}
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '40px' }}>
+          <div style={{ width: '100%' }}>
+            <BuyButton filmId={film.id} price={film.price} title={film.title} />
+          </div>
+
+          {note && (
+            <p style={{
+              color: 'rgba(255,255,255,0.45)',
+              fontSize: '14px',
+              fontStyle: 'italic',
+              textAlign: 'center',
+              margin: 0,
+              lineHeight: 1.6,
+            }}>
+              {note}
+            </p>
+          )}
+
+          <ShareButton />
         </div>
-
-        {/* Personal note from sharer */}
-        {note && (
-          <p style={{
-            color: 'rgba(255,255,255,0.45)',
-            fontSize: '14px',
-            fontStyle: 'italic',
-            textAlign: 'center',
-            margin: 0,
-            lineHeight: 1.6,
-          }}>
-            {note}
-          </p>
-        )}
-
-        {/* Share */}
-        <ShareButton />
 
       </div>
     </main>
