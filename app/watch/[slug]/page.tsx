@@ -112,7 +112,7 @@ export default async function WatchPage(props: {
             fontSize: '15px',
             textAlign: 'center',
             lineHeight: 1.6,
-            maxWidth: '360px',
+            maxWidth: '300px',
             margin: '32px auto',
           }}>
             {film.description}
