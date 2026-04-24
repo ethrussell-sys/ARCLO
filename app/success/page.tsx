@@ -8,14 +8,38 @@ import DownloadButton from './DownloadButton'
 import ShareSection from './ShareSection'
 
 async function getMoreFilms(excludeId: string) {
-  const { data } = await serverClient()
-    .from('films')
-    .select('id, title, director, price, thumbnail_url')
-    .eq('status', 'live')
-    .neq('id', excludeId)
-    .order('created_at', { ascending: false })
-    .limit(3)
-  return data ?? []
+  // Fetch purchased film's tags and all other live films in parallel
+  const [{ data: purchased }, { data: candidates }] = await Promise.all([
+    serverClient()
+      .from('films')
+      .select('tags')
+      .eq('id', excludeId)
+      .single(),
+    serverClient()
+      .from('films')
+      .select('id, title, director, price, thumbnail_url, tags')
+      .eq('status', 'live')
+      .neq('id', excludeId)
+      .order('created_at', { ascending: false })
+      .limit(20),
+  ])
+
+  const films = candidates ?? []
+  const purchasedTags: string[] = purchased?.tags ?? []
+
+  if (purchasedTags.length === 0) return films.slice(0, 3)
+
+  // Score by number of overlapping tags, then fall back to insertion order
+  const scored = films.map((f) => {
+    const overlap = (f.tags as string[] ?? []).filter((t) =>
+      purchasedTags.includes(t)
+    ).length
+    return { film: f, overlap }
+  })
+
+  scored.sort((a, b) => b.overlap - a.overlap)
+
+  return scored.slice(0, 3).map((s) => s.film)
 }
 
 async function getOrCreatePurchase(sessionId: string) {
