@@ -15,10 +15,10 @@ function youtubeEmbedUrl(url: string): string | null {
 
 export default async function WatchPage(props: {
   params: Promise<{ slug: string }>
-  searchParams: Promise<{ note?: string }>
+  searchParams: Promise<{ note?: string; from?: string }>
 }) {
   const { slug } = await props.params
-  const { note } = await props.searchParams
+  const { note, from } = await props.searchParams
   const filmId = SLUG_TO_ID[slug]
   if (!filmId) notFound()
 
@@ -105,22 +105,21 @@ export default async function WatchPage(props: {
           </div>
         )}
 
-        {/* Buy button → note → share: 40px gaps */}
-        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '40px' }}>
+        {/* Buy button → note → share */}
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{ width: '100%' }}>
             <BuyButton filmId={film.id} price={film.price} title={film.title} />
           </div>
 
-          {note && (
+          {(note || from) && (
             <p style={{
               color: 'rgba(255,255,255,0.45)',
               fontSize: '14px',
-              fontStyle: 'italic',
               textAlign: 'center',
-              margin: 0,
+              margin: '48px 0',
               lineHeight: 1.6,
             }}>
-              {note}
+              {from && note ? `From ${from} — ${note}` : from ? `From ${from}` : note}
             </p>
           )}
 
