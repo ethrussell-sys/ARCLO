@@ -24,7 +24,7 @@ export default async function WatchPage(props: {
 
   const { data: film } = await serverClient()
     .from('films')
-    .select('id, title, director, year, price, trailer_url')
+    .select('id, title, director, year, price, trailer_url, description')
     .eq('id', filmId)
     .single()
 
@@ -103,6 +103,20 @@ export default async function WatchPage(props: {
               allowFullScreen
             />
           </div>
+        )}
+
+        {/* Synopsis */}
+        {film.description && (
+          <p style={{
+            color: 'rgba(255,255,255,0.55)',
+            fontSize: '15px',
+            textAlign: 'center',
+            lineHeight: 1.6,
+            maxWidth: '480px',
+            margin: '32px auto',
+          }}>
+            {film.description}
+          </p>
         )}
 
         {/* Buy button → note → share */}
