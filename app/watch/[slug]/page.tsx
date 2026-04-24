@@ -111,7 +111,7 @@ export default async function WatchPage(props: {
             <BuyButton filmId={film.id} price={film.price} title={film.title} />
           </div>
 
-          {(note || from) && (
+          {note && (
             <p style={{
               color: 'rgba(255,255,255,0.45)',
               fontSize: '14px',
@@ -119,7 +119,7 @@ export default async function WatchPage(props: {
               margin: '48px 0',
               lineHeight: 1.6,
             }}>
-              {from && note ? `From ${from} — ${note}` : from ? `From ${from}` : note}
+              {note && from ? `${note} — From ${from}` : note}
             </p>
           )}
 
