@@ -7,6 +7,17 @@ import { ID_TO_SLUG } from '@/lib/slug-map'
 import DownloadButton from './DownloadButton'
 import ShareSection from './ShareSection'
 
+async function getMoreFilms(excludeId: string) {
+  const { data } = await serverClient()
+    .from('films')
+    .select('id, title, director, price, thumbnail_url')
+    .eq('status', 'live')
+    .neq('id', excludeId)
+    .order('created_at', { ascending: false })
+    .limit(3)
+  return data ?? []
+}
+
 async function getOrCreatePurchase(sessionId: string) {
   const session = await getStripe().checkout.sessions.retrieve(sessionId)
 
@@ -82,23 +93,23 @@ export default async function SuccessPage(props: {
   }
 
   const { film, email, downloadUrl, slug } = result
+  const moreFilms = await getMoreFilms(film.id)
 
   return (
-    <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-5">
-      <div className="w-full max-w-sm flex flex-col items-center gap-8 text-center">
-        <div
-          className="w-16 h-16 rounded-full flex items-center justify-center"
-          style={{ backgroundColor: '#0A84FF' }}
-        >
+    <main style={{ backgroundColor: '#000', color: '#fff', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '80px', paddingBottom: '80px' }}>
+
+      {/* ── Purchase confirmation ── */}
+      <div style={{ width: '100%', maxWidth: '384px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '32px', textAlign: 'center', paddingLeft: '20px', paddingRight: '20px' }}>
+        <div style={{ width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0A84FF' }}>
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="20 6 9 17 4 12" />
           </svg>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-bold">You own it.</h1>
-          <p className="text-neutral-400 text-sm leading-relaxed">
-            <span className="text-white font-medium">{film.title}</span> is yours forever.
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: 700, margin: 0 }}>You own it.</h1>
+          <p style={{ color: '#737373', fontSize: '14px', lineHeight: 1.6, margin: 0 }}>
+            <span style={{ color: '#fff', fontWeight: 500 }}>{film.title}</span> is yours forever.
             <br />
             Download link sent to {email}.
           </p>
@@ -106,13 +117,110 @@ export default async function SuccessPage(props: {
 
         <DownloadButton url={downloadUrl} title={film.title} />
 
-        <p className="text-neutral-600 text-xs">
+        <p style={{ color: '#404040', fontSize: '12px', margin: 0 }}>
           Link expires in 24 hours. Check your email for a permanent copy.
         </p>
 
         <ShareSection watchUrl={`${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/watch/${slug}`} />
-
       </div>
+
+      {/* ── More films ── */}
+      {moreFilms.length > 0 && (
+        <div style={{ width: '100%', marginTop: '72px' }}>
+          <p style={{
+            color: 'rgba(255,255,255,0.3)',
+            fontSize: '11px',
+            letterSpacing: '0.2em',
+            textTransform: 'uppercase',
+            textAlign: 'center',
+            marginBottom: '24px',
+          }}>
+            More films you&apos;ll want to own
+          </p>
+
+          <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', paddingLeft: '20px', paddingRight: '20px', scrollbarWidth: 'none' }}>
+            {moreFilms.map((f) => {
+              const fSlug = ID_TO_SLUG[f.id] ?? f.id
+              return (
+                <a
+                  key={f.id}
+                  href={`/watch/${fSlug}`}
+                  style={{
+                    flexShrink: 0,
+                    width: '200px',
+                    height: '280px',
+                    borderRadius: '8px',
+                    overflow: 'hidden',
+                    backgroundColor: '#111',
+                    display: 'block',
+                    position: 'relative',
+                    textDecoration: 'none',
+                  }}
+                >
+                  <div style={{ position: 'absolute', inset: 0, borderRadius: '8px', overflow: 'hidden' }}>
+                    {f.thumbnail_url && (
+                      <img
+                        src={f.thumbnail_url}
+                        alt={f.title}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                      />
+                    )}
+                  </div>
+                  <div style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '40%',
+                    borderRadius: '0 0 8px 8px',
+                    background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)',
+                    zIndex: 2,
+                  }}>
+                    <div style={{ position: 'absolute', bottom: '12px', left: '12px', right: '12px' }}>
+                      <span style={{
+                        fontFamily: 'var(--font-bebas)',
+                        fontSize: '14px',
+                        color: '#fff',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.1em',
+                        lineHeight: 1,
+                        display: 'block',
+                      }}>
+                        {f.title}
+                      </span>
+                      {f.director && (
+                        <span style={{
+                          fontSize: '10px',
+                          color: 'rgba(255,255,255,0.5)',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.15em',
+                          display: 'block',
+                          marginTop: '4px',
+                        }}>
+                          {f.director}
+                        </span>
+                      )}
+                      {f.price != null && (
+                        <span style={{
+                          fontSize: '10px',
+                          color: 'rgba(255,255,255,0.4)',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.15em',
+                          display: 'block',
+                          marginTop: '2px',
+                        }}>
+                          ${Number(f.price).toFixed(2)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </a>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
     </main>
   )
 }
