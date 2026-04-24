@@ -3,7 +3,9 @@ import { getStripe } from '@/lib/stripe'
 import { serverClient } from '@/lib/supabase'
 import { presignedDownloadUrl } from '@/lib/s3'
 import { sendPurchaseConfirmation } from '@/lib/emails/send'
+import { ID_TO_SLUG } from '@/lib/slug-map'
 import DownloadButton from './DownloadButton'
+import ShareSection from './ShareSection'
 
 async function getOrCreatePurchase(sessionId: string) {
   const session = await getStripe().checkout.sessions.retrieve(sessionId)
@@ -55,7 +57,8 @@ async function getOrCreatePurchase(sessionId: string) {
     )
   }
 
-  return { film, email, downloadUrl }
+  const slug = ID_TO_SLUG[film.id] ?? film.id
+  return { film, email, downloadUrl, slug }
 }
 
 export default async function SuccessPage(props: {
@@ -78,7 +81,7 @@ export default async function SuccessPage(props: {
     )
   }
 
-  const { film, email, downloadUrl } = result
+  const { film, email, downloadUrl, slug } = result
 
   return (
     <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-5">
@@ -106,6 +109,9 @@ export default async function SuccessPage(props: {
         <p className="text-neutral-600 text-xs">
           Link expires in 24 hours. Check your email for a permanent copy.
         </p>
+
+        <ShareSection watchUrl={`${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/watch/${slug}`} />
+
       </div>
     </main>
   )

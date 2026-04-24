@@ -1,11 +1,8 @@
 import { notFound } from 'next/navigation'
 import { serverClient } from '@/lib/supabase'
+import { SLUG_TO_ID } from '@/lib/slug-map'
 import BuyButton from '@/app/films/[id]/BuyButton'
 import ShareButton from './ShareButton'
-
-const SLUG_MAP: Record<string, string> = {
-  'the-last-shore': '71f88776-0edc-432a-b2a3-d3a548948530',
-}
 
 function youtubeEmbedUrl(url: string): string | null {
   const match = url.match(
@@ -18,9 +15,11 @@ function youtubeEmbedUrl(url: string): string | null {
 
 export default async function WatchPage(props: {
   params: Promise<{ slug: string }>
+  searchParams: Promise<{ note?: string }>
 }) {
   const { slug } = await props.params
-  const filmId = SLUG_MAP[slug]
+  const { note } = await props.searchParams
+  const filmId = SLUG_TO_ID[slug]
   if (!filmId) notFound()
 
   const { data: film } = await serverClient()
@@ -110,6 +109,20 @@ export default async function WatchPage(props: {
         <div style={{ width: '100%' }}>
           <BuyButton filmId={film.id} price={film.price} title={film.title} />
         </div>
+
+        {/* Personal note from sharer */}
+        {note && (
+          <p style={{
+            color: 'rgba(255,255,255,0.45)',
+            fontSize: '14px',
+            fontStyle: 'italic',
+            textAlign: 'center',
+            margin: 0,
+            lineHeight: 1.6,
+          }}>
+            {note}
+          </p>
+        )}
 
         {/* Share */}
         <ShareButton />
