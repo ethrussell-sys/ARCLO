@@ -120,16 +120,19 @@ export default async function WatchPage(props: {
           </div>
 
           {note && (
-            <p style={{
+            <div style={{
               color: 'rgba(255,255,255,0.45)',
               fontSize: '14px',
               fontStyle: 'italic',
               textAlign: 'center',
               margin: '48px 0',
-              lineHeight: 1.6,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '6px',
             }}>
-              {note && from ? `${note} — ${from}` : note}
-            </p>
+              <span>{note}</span>
+              {from && <span>{from}</span>}
+            </div>
           )}
 
           <ShareButton />
