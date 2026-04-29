@@ -128,7 +128,7 @@ export default async function WatchPage(props: {
               margin: '48px 0',
               lineHeight: 1.6,
             }}>
-              {note && from ? `${note} — From ${from}` : note}
+              {note && from ? `${note} — ${from}` : note}
             </p>
           )}
 
