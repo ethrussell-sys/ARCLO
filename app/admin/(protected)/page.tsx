@@ -7,6 +7,7 @@ async function getData() {
   const [
     { data: submissions },
     { data: purchases },
+    { data: waitlist },
     { count: pageViews },
     { count: trailerPlays },
     { count: checkoutStarts },
@@ -19,6 +20,10 @@ async function getData() {
 
     db.from('purchases')
       .select('id, email, created_at, films(title, price)')
+      .order('created_at', { ascending: false }),
+
+    db.from('waitlist')
+      .select('id, email, country, film_slug, created_at')
       .order('created_at', { ascending: false }),
 
     db.from('events').select('*', { count: 'exact', head: true }).eq('event_type', 'page_view'),
@@ -40,6 +45,7 @@ async function getData() {
   return {
     submissions: submissions ?? [],
     purchases: purchases ?? [],
+    waitlist: waitlist ?? [],
     totalRevenue,
     stats: {
       pageViews: pageViews ?? 0,
@@ -85,7 +91,7 @@ const divider: React.CSSProperties = {
 }
 
 export default async function AdminPage() {
-  const { submissions, purchases, totalRevenue, stats } = await getData()
+  const { submissions, purchases, waitlist, totalRevenue, stats } = await getData()
 
   return (
     <main className="min-h-screen bg-black text-white">
@@ -156,6 +162,45 @@ export default async function AdminPage() {
                       </tr>
                     )
                   })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+
+        <hr style={divider} />
+
+        {/* ── Waitlist ────────────────────────────────────────────────────── */}
+        <section>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', marginBottom: '24px' }}>
+            <h2 style={sectionHead}>Waitlist</h2>
+            <span style={{ color: '#525252', fontSize: '13px' }}>{waitlist.length} signups</span>
+          </div>
+
+          {waitlist.length === 0 ? (
+            <p style={{ color: '#404040', fontSize: '14px' }}>No waitlist signups yet.</p>
+          ) : (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>
+                    <th style={th}>Email</th>
+                    <th style={th}>Country</th>
+                    <th style={th}>Film</th>
+                    <th style={th}>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {waitlist.map((w) => (
+                    <tr key={w.id}>
+                      <td style={{ ...td, color: '#fff' }}>{w.email}</td>
+                      <td style={td}>{w.country ?? '—'}</td>
+                      <td style={td}>{w.film_slug ?? '—'}</td>
+                      <td style={{ ...td, whiteSpace: 'nowrap' }}>
+                        {new Date(w.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

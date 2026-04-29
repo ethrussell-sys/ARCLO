@@ -1,7 +1,9 @@
 import { notFound } from 'next/navigation'
+import { headers } from 'next/headers'
 import { serverClient } from '@/lib/supabase'
 import { SLUG_TO_ID } from '@/lib/slug-map'
 import BuyButton from '@/app/films/[id]/BuyButton'
+import WaitlistPanel from './WaitlistPanel'
 import ShareButton from './ShareButton'
 
 function youtubeEmbedUrl(url: string): string | null {
@@ -19,6 +21,8 @@ export default async function WatchPage(props: {
 }) {
   const { slug } = await props.params
   const { note, from } = await props.searchParams
+  const country = (await headers()).get('x-vercel-ip-country')
+  const isUS = !country || country === 'US'
   const filmId = SLUG_TO_ID[slug]
   if (!filmId) notFound()
 
@@ -119,10 +123,13 @@ export default async function WatchPage(props: {
           </p>
         )}
 
-        {/* Buy button → note → share */}
+        {/* Buy button (US) or waitlist (non-US) → note → share */}
         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{ width: '100%' }}>
-            <BuyButton filmId={film.id} price={film.price} title={film.title} />
+            {isUS
+              ? <BuyButton filmId={film.id} price={film.price} title={film.title} />
+              : <WaitlistPanel slug={slug} country={country!} />
+            }
           </div>
 
           {note && (
