@@ -19,6 +19,7 @@ import { getStripe } from '@/lib/stripe'
 import { serverClient } from '@/lib/supabase'
 import { presignedDownloadUrl } from '@/lib/s3'
 import { sendPurchaseConfirmation } from '@/lib/emails/send'
+import { generateRedemptionCode } from '@/lib/redemption-code'
 import type Stripe from 'stripe'
 
 export async function POST(request: Request) {
@@ -84,6 +85,7 @@ export async function POST(request: Request) {
 
   const downloadUrl = await presignedDownloadUrl(film.file_key)
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+  const redemptionCode = generateRedemptionCode()
 
   await serverClient()
     .from('purchases')
@@ -93,10 +95,11 @@ export async function POST(request: Request) {
       stripe_payment_id: paymentIntentId,
       download_url: downloadUrl,
       expires_at: expiresAt,
+      redemption_code: redemptionCode,
     })
 
   if (email) {
-    sendPurchaseConfirmation({ to: email, filmTitle: film.title, downloadUrl }).catch(
+    sendPurchaseConfirmation({ to: email, filmTitle: film.title, downloadUrl, redemptionCode }).catch(
       (err) => console.error('[webhook] email failed:', err)
     )
   }

@@ -3,9 +3,10 @@ import * as React from 'react'
 type Props = {
   filmTitle: string
   downloadUrl: string
+  redemptionCode: string
 }
 
-export function PurchaseConfirmationEmail({ filmTitle, downloadUrl }: Props) {
+export function PurchaseConfirmationEmail({ filmTitle, downloadUrl, redemptionCode }: Props) {
   return (
     <html lang="en">
       <head>
@@ -74,12 +75,20 @@ export function PurchaseConfirmationEmail({ filmTitle, downloadUrl }: Props) {
                       </td>
                     </tr>
 
+                    {/* Redemption code */}
+                    <tr>
+                      <td style={{ paddingBottom: '16px' }}>
+                        <p style={codeLabel}>Your permanent access code</p>
+                        <p style={codeBlock}>{redemptionCode}</p>
+                      </td>
+                    </tr>
+
                     {/* Fine print */}
                     <tr>
                       <td>
                         <p style={finePrint}>
-                          This link expires in 24 hours. Keep this email — it&apos;s your receipt.
-                          <br />
+                          Your download link expires in 24 hours. Use this code at arclo.com/download to generate a new one at any time.
+                          <br /><br />
                           Questions? Reply to this email and we&apos;ll sort it out.
                         </p>
                       </td>
@@ -163,6 +172,28 @@ const button: React.CSSProperties = {
   borderRadius: '12px',
   display: 'inline-block',
   letterSpacing: '0.1px',
+}
+
+const codeLabel: React.CSSProperties = {
+  color: '#525252',
+  fontSize: '11px',
+  letterSpacing: '0.15em',
+  textTransform: 'uppercase',
+  margin: '0 0 10px',
+}
+
+const codeBlock: React.CSSProperties = {
+  color: '#ffffff',
+  fontSize: '20px',
+  fontWeight: 700,
+  letterSpacing: '0.12em',
+  fontFamily: 'monospace',
+  backgroundColor: '#0d0d0d',
+  border: '1px solid #222',
+  borderRadius: '8px',
+  padding: '14px 20px',
+  margin: 0,
+  display: 'inline-block',
 }
 
 const finePrint: React.CSSProperties = {

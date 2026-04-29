@@ -9,10 +9,12 @@ export async function sendPurchaseConfirmation({
   to,
   filmTitle,
   downloadUrl,
+  redemptionCode,
 }: {
   to: string
   filmTitle: string
   downloadUrl: string
+  redemptionCode: string
 }) {
   console.log('[email] sending purchase confirmation', {
     to,
@@ -26,7 +28,7 @@ export async function sendPurchaseConfirmation({
     from: FROM,
     to,
     subject: `You own ${filmTitle} — download it now`,
-    react: React.createElement(PurchaseConfirmationEmail, { filmTitle, downloadUrl }),
+    react: React.createElement(PurchaseConfirmationEmail, { filmTitle, downloadUrl, redemptionCode }),
   })
 
   if (error) {

@@ -2,6 +2,7 @@ import { getStripe } from '@/lib/stripe'
 import { serverClient } from '@/lib/supabase'
 import { presignedDownloadUrl } from '@/lib/s3'
 import { sendPurchaseConfirmation } from '@/lib/emails/send'
+import { generateRedemptionCode } from '@/lib/redemption-code'
 
 export async function POST(request: Request) {
   const { paymentIntentId, email } = await request.json()
@@ -31,6 +32,16 @@ export async function POST(request: Request) {
   const downloadUrl = await presignedDownloadUrl(film.file_key)
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
 
+  // Preserve existing redemption code on re-attempts; generate one for new purchases
+  const { data: existing } = await serverClient()
+    .from('purchases')
+    .select('redemption_code')
+    .eq('stripe_payment_id', paymentIntentId)
+    .maybeSingle()
+
+  const isNew = !existing
+  const redemptionCode = existing?.redemption_code ?? generateRedemptionCode()
+
   await serverClient()
     .from('purchases')
     .upsert(
@@ -40,13 +51,14 @@ export async function POST(request: Request) {
         stripe_payment_id: paymentIntentId,
         download_url: downloadUrl,
         expires_at: expiresAt,
+        redemption_code: redemptionCode,
       },
       { onConflict: 'stripe_payment_id', ignoreDuplicates: false }
     )
 
   // Send email without blocking the response — download URL is the critical path
-  if (email) {
-    sendPurchaseConfirmation({ to: email, filmTitle: film.title, downloadUrl }).catch(
+  if (email && isNew) {
+    sendPurchaseConfirmation({ to: email, filmTitle: film.title, downloadUrl, redemptionCode }).catch(
       (err) => console.error('Purchase email failed:', err)
     )
   }
