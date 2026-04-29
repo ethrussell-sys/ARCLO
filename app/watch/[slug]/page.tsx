@@ -4,6 +4,7 @@ import { serverClient } from '@/lib/supabase'
 import { SLUG_TO_ID } from '@/lib/slug-map'
 import BuyButton from '@/app/films/[id]/BuyButton'
 import WaitlistPanel from './WaitlistPanel'
+import AgeGate from './AgeGate'
 import ShareButton from './ShareButton'
 
 function youtubeEmbedUrl(url: string): string | null {
@@ -28,7 +29,7 @@ export default async function WatchPage(props: {
 
   const { data: film } = await serverClient()
     .from('films')
-    .select('id, title, director, year, price, trailer_url, description')
+    .select('id, title, director, year, price, trailer_url, description, rating')
     .eq('id', filmId)
     .single()
 
@@ -43,6 +44,8 @@ export default async function WatchPage(props: {
   ].filter(Boolean).join('   ·   ')
 
   return (
+    <>
+    {film.rating === 'R' && <AgeGate slug={slug} />}
     <main style={{
       backgroundColor: '#000',
       color: '#fff',
@@ -150,5 +153,6 @@ export default async function WatchPage(props: {
 
       </div>
     </main>
+    </>
   )
 }
