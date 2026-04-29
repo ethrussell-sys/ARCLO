@@ -6,6 +6,7 @@ import BuyButton from '@/app/films/[id]/BuyButton'
 import WaitlistPanel from './WaitlistPanel'
 import AgeGate from './AgeGate'
 import ShareButton from './ShareButton'
+import TrailerPlayer from './TrailerPlayer'
 
 function youtubeEmbedUrl(url: string): string | null {
   const match = url.match(
@@ -93,24 +94,7 @@ export default async function WatchPage(props: {
         )}
 
         {/* Trailer */}
-        {embedUrl && (
-          <div style={{
-            position: 'relative',
-            width: '100%',
-            paddingTop: '56.25%',
-            borderRadius: '12px',
-            overflow: 'hidden',
-            backgroundColor: '#0a0a0a',
-          }}>
-            <iframe
-              src={embedUrl}
-              title={`${film.title} — trailer`}
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none' }}
-              allow="autoplay; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
-        )}
+        {embedUrl && <TrailerPlayer embedUrl={embedUrl} title={`${film.title} — trailer`} />}
 
         {/* Synopsis */}
         {film.description && (
