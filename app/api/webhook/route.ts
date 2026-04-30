@@ -54,6 +54,11 @@ export async function POST(request: Request) {
   const paymentIntentId = session.payment_intent as string
   const filmId = session.metadata?.filmId
   const email = session.customer_details?.email
+  const utm_source = session.metadata?.utm_source ?? null
+  const utm_medium = session.metadata?.utm_medium ?? null
+  const utm_campaign = session.metadata?.utm_campaign ?? null
+  const utm_content = session.metadata?.utm_content ?? null
+  const utm_term = session.metadata?.utm_term ?? null
 
   if (!paymentIntentId || !filmId) {
     console.error('[webhook] missing paymentIntentId or filmId', { paymentIntentId, filmId })
@@ -96,6 +101,11 @@ export async function POST(request: Request) {
       download_url: downloadUrl,
       expires_at: expiresAt,
       redemption_code: redemptionCode,
+      utm_source,
+      utm_medium,
+      utm_campaign,
+      utm_content,
+      utm_term,
     })
 
   if (email) {

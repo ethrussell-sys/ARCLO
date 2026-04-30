@@ -1,10 +1,12 @@
 'use client'
 
 import { useRef, useState } from 'react'
+import { readUtm } from '@/lib/utm'
 
-export default function TrailerPlayer({ embedUrl, title }: { embedUrl: string; title: string }) {
+export default function TrailerPlayer({ embedUrl, title, filmId }: { embedUrl: string; title: string; filmId: string }) {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [muted, setMuted] = useState(true)
+  const firedRef = useRef(false)
 
   function toggleMute() {
     const win = iframeRef.current?.contentWindow
@@ -13,6 +15,15 @@ export default function TrailerPlayer({ embedUrl, title }: { embedUrl: string; t
       JSON.stringify({ event: 'command', func: muted ? 'unMute' : 'mute', args: [] }),
       '*'
     )
+    if (muted && !firedRef.current) {
+      firedRef.current = true
+      const sessionId = sessionStorage.getItem('arclo_session') ?? ''
+      fetch('/api/events', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ event_type: 'trailer_play', film_id: filmId, session_id: sessionId, ...readUtm() }),
+      }).catch(() => {})
+    }
     setMuted((m) => !m)
   }
 

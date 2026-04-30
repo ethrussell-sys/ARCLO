@@ -2,7 +2,7 @@ import { getStripe } from '@/lib/stripe'
 import { serverClient } from '@/lib/supabase'
 
 export async function POST(request: Request) {
-  const { filmId } = await request.json()
+  const { filmId, utm_source, utm_medium, utm_campaign, utm_content, utm_term } = await request.json()
 
   if (!filmId) {
     return Response.json({ error: 'filmId required' }, { status: 400 })
@@ -35,7 +35,14 @@ export async function POST(request: Request) {
     ],
     success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}/films/${film.id}`,
-    metadata: { filmId: film.id },
+    metadata: {
+      filmId: film.id,
+      ...(utm_source && { utm_source }),
+      ...(utm_medium && { utm_medium }),
+      ...(utm_campaign && { utm_campaign }),
+      ...(utm_content && { utm_content }),
+      ...(utm_term && { utm_term }),
+    },
   })
 
   return Response.json({ url: session.url })

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { loadStripe } from '@stripe/stripe-js'
 import type { Stripe, PaymentRequest } from '@stripe/stripe-js'
+import { readUtm } from '@/lib/utm'
 
 type Props = { filmId: string; price: number; title: string }
 
@@ -129,7 +130,7 @@ export default function BuyButton({ filmId, price, title }: Props) {
     const res = await fetch('/api/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ filmId }),
+      body: JSON.stringify({ filmId, ...readUtm() }),
     })
     if (!res.ok) { setPhase('error'); setErrorMsg('Checkout failed. Please try again.'); return }
     const { url } = await res.json()
