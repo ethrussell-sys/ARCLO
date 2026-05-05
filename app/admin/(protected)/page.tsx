@@ -19,7 +19,7 @@ async function getData() {
       .order('created_at', { ascending: false }),
 
     db.from('purchases')
-      .select('id, email, created_at, utm_source, utm_medium, utm_campaign, films(title, price)')
+      .select('id, email, created_at, utm_source, utm_medium, utm_campaign, download_count, download_limit, films(title, price)')
       .order('created_at', { ascending: false }),
 
     db.from('waitlist')
@@ -222,6 +222,7 @@ export default async function AdminPage() {
                     <th style={th}>Source</th>
                     <th style={th}>Medium</th>
                     <th style={th}>Campaign</th>
+                    <th style={{ ...th, textAlign: 'right' }}>Downloads</th>
                     <th style={th}>Date</th>
                     <th style={{ ...th, textAlign: 'right' }}>Amount</th>
                   </tr>
@@ -229,7 +230,9 @@ export default async function AdminPage() {
                 <tbody>
                   {purchases.map((p) => {
                     const film = p.films as { title?: string; price?: number } | null
-                    const row = p as typeof p & { utm_source?: string; utm_medium?: string; utm_campaign?: string }
+                    const row = p as typeof p & { utm_source?: string; utm_medium?: string; utm_campaign?: string; download_count?: number; download_limit?: number }
+                    const dlCount = row.download_count ?? 0
+                    const dlLimit = row.download_limit ?? 5
                     return (
                       <tr key={p.id}>
                         <td style={{ ...td, color: '#fff' }}>{film?.title ?? '—'}</td>
@@ -237,6 +240,9 @@ export default async function AdminPage() {
                         <td style={td}>{row.utm_source ?? '—'}</td>
                         <td style={td}>{row.utm_medium ?? '—'}</td>
                         <td style={td}>{row.utm_campaign ?? '—'}</td>
+                        <td style={{ ...td, textAlign: 'right', fontVariantNumeric: 'tabular-nums', color: dlCount >= dlLimit ? 'rgba(255,80,80,0.7)' : td.color }}>
+                          {dlCount} / {dlLimit}
+                        </td>
                         <td style={{ ...td, whiteSpace: 'nowrap' }}>
                           {new Date(p.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </td>
