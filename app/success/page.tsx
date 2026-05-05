@@ -6,6 +6,7 @@ import { sendPurchaseConfirmation } from '@/lib/emails/send'
 import { ID_TO_SLUG } from '@/lib/slug-map'
 import DownloadButton from './DownloadButton'
 import ShareSection from './ShareSection'
+import PurchaseTracker from './PurchaseTracker'
 
 async function getOrCreatePurchase(sessionId: string) {
   const session = await getStripe().checkout.sessions.retrieve(sessionId)
@@ -84,6 +85,8 @@ export default async function SuccessPage(props: {
   const { film, email, downloadUrl, slug } = result
 
   return (
+    <>
+    <PurchaseTracker filmId={film.id} filmSlug={slug} />
     <main style={{ backgroundColor: '#000', color: '#fff', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '80px', paddingBottom: '80px' }}>
 
       <div style={{ width: '100%', maxWidth: '384px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '32px', textAlign: 'center', paddingLeft: '20px', paddingRight: '20px' }}>
@@ -128,5 +131,6 @@ export default async function SuccessPage(props: {
       </div>
 
     </main>
+    </>
   )
 }

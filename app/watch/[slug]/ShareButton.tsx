@@ -1,11 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import { track } from '@/lib/track'
 
-export default function ShareButton() {
+export default function ShareButton({ filmId, filmSlug }: { filmId?: string; filmSlug?: string }) {
   const [copied, setCopied] = useState(false)
 
   async function handleShare() {
+    track({ event_type: 'share_button_click', film_id: filmId, film_slug: filmSlug })
     const url = window.location.href
     const canShare = typeof navigator.share === 'function'
 

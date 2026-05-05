@@ -32,6 +32,62 @@ async function getData() {
     db.from('events').select('*', { count: 'exact', head: true }).eq('event_type', 'purchase_complete'),
   ])
 
+  // ── Funnel + analytics ──────────────────────────────────────────────────
+  const [
+    { count: funnelPageViews },
+    { count: funnelTrailerPlay },
+    { count: funnelBuyVisible },
+    { count: funnelBuyClick },
+    { count: funnelPurchased },
+    { count: returnVisits },
+    { data: trailerProgressEvents },
+    { data: purchaseCompletedEvents },
+  ] = await Promise.all([
+    db.from('events').select('*', { count: 'exact', head: true }).eq('event_type', 'page_view'),
+    db.from('events').select('*', { count: 'exact', head: true }).eq('event_type', 'trailer_play'),
+    db.from('events').select('*', { count: 'exact', head: true }).eq('event_type', 'buy_button_visible'),
+    db.from('events').select('*', { count: 'exact', head: true }).eq('event_type', 'buy_button_click'),
+    db.from('events').select('*', { count: 'exact', head: true }).eq('event_type', 'purchase_completed'),
+    db.from('events').select('*', { count: 'exact', head: true }).eq('event_type', 'return_visit'),
+    db.from('events').select('metadata').eq('event_type', 'trailer_progress'),
+    db.from('events').select('metadata').eq('event_type', 'purchase_completed'),
+  ])
+
+  // Trailer dropoff — count distinct sessions at each progress milestone
+  const trailerDropoff = [10, 25, 50, 75, 90, 100].map((pct) => ({
+    pct,
+    count: (trailerProgressEvents ?? []).filter(
+      (e) => (e.metadata as Record<string, unknown> | null)?.progress_percent === pct
+    ).length,
+  }))
+
+  // Average seconds from first visit to purchase
+  const secondsList = (purchaseCompletedEvents ?? [])
+    .map((e) => (e.metadata as Record<string, unknown> | null)?.seconds_to_purchase)
+    .filter((v): v is number => typeof v === 'number')
+  const avgSecondsToPurchase =
+    secondsList.length > 0
+      ? Math.round(secondsList.reduce((a, b) => a + b, 0) / secondsList.length)
+      : null
+
+  // Return visitor conversion rate
+  const returnVisitCount = returnVisits ?? 0
+  const returnConversions = (purchaseCompletedEvents ?? []).filter(
+    (e) => ((e.metadata as Record<string, unknown> | null)?.visit_count as number) > 1
+  ).length
+
+  // UTM sources by conversion
+  type PurchaseRow = { utm_source?: string | null; utm_medium?: string | null; utm_campaign?: string | null }
+  const utmStats = (purchases as PurchaseRow[] ?? []).reduce<
+    Record<string, { source: string; purchases: number }>
+  >((acc, p) => {
+    const src = p.utm_source ?? '(direct)'
+    if (!acc[src]) acc[src] = { source: src, purchases: 0 }
+    acc[src].purchases += 1
+    return acc
+  }, {})
+  const utmRows = Object.values(utmStats).sort((a, b) => b.purchases - a.purchases)
+
   const totalRevenue = (purchases ?? []).reduce((sum, p) => {
     const film = p.films as { price?: number } | null
     return sum + (film?.price ?? 1.99)
@@ -54,6 +110,19 @@ async function getData() {
       completedPurchases: completedPurchases ?? 0,
       conversionRate,
     },
+    funnel: {
+      pageViews: funnelPageViews ?? 0,
+      trailerPlay: funnelTrailerPlay ?? 0,
+      trailer50: trailerDropoff.find((d) => d.pct === 50)?.count ?? 0,
+      buyVisible: funnelBuyVisible ?? 0,
+      buyClick: funnelBuyClick ?? 0,
+      purchased: funnelPurchased ?? 0,
+    },
+    trailerDropoff,
+    avgSecondsToPurchase,
+    returnVisitCount,
+    returnConversions,
+    utmRows,
   }
 }
 
@@ -90,8 +159,16 @@ const divider: React.CSSProperties = {
   margin: '48px 0',
 }
 
+function funnelPct(numerator: number, denominator: number): string {
+  if (!denominator) return '—'
+  return `${((numerator / denominator) * 100).toFixed(1)}%`
+}
+
 export default async function AdminPage() {
-  const { submissions, purchases, waitlist, totalRevenue, stats } = await getData()
+  const {
+    submissions, purchases, waitlist, totalRevenue, stats,
+    funnel, trailerDropoff, avgSecondsToPurchase, returnVisitCount, returnConversions, utmRows,
+  } = await getData()
 
   return (
     <main className="min-h-screen bg-black text-white">
@@ -249,6 +326,144 @@ export default async function AdminPage() {
               page view → purchase conversion
             </span>
           </div>
+        </section>
+
+        <hr style={divider} />
+
+        {/* ── Funnel ──────────────────────────────────────────────────────── */}
+        <section>
+          <h2 style={{ ...sectionHead, marginBottom: '24px' }}>Funnel</h2>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr>
+                  <th style={th}>Step</th>
+                  <th style={{ ...th, textAlign: 'right' }}>Count</th>
+                  <th style={{ ...th, textAlign: 'right' }}>% of prev</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { label: 'Page view',          value: funnel.pageViews },
+                  { label: 'Trailer play',        value: funnel.trailerPlay },
+                  { label: 'Trailer 50% watched', value: funnel.trailer50 },
+                  { label: 'Buy button visible',  value: funnel.buyVisible },
+                  { label: 'Buy button click',    value: funnel.buyClick },
+                  { label: 'Purchase completed',  value: funnel.purchased },
+                ].map(({ label, value }, i, arr) => {
+                  const prev = i === 0 ? null : arr[i - 1].value
+                  return (
+                    <tr key={label}>
+                      <td style={{ ...td, color: '#fff' }}>{label}</td>
+                      <td style={{ ...td, textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{value.toLocaleString()}</td>
+                      <td style={{ ...td, textAlign: 'right', color: prev === null ? '#525252' : value > 0 ? '#0A84FF' : '#404040' }}>
+                        {prev === null ? '—' : funnelPct(value, prev)}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <hr style={divider} />
+
+        {/* ── Trailer dropoff ──────────────────────────────────────────────── */}
+        <section>
+          <h2 style={{ ...sectionHead, marginBottom: '24px' }}>Trailer Dropoff</h2>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr>
+                  <th style={th}>Progress</th>
+                  <th style={{ ...th, textAlign: 'right' }}>Reached</th>
+                  <th style={{ ...th, textAlign: 'right' }}>% of plays</th>
+                </tr>
+              </thead>
+              <tbody>
+                {trailerDropoff.map(({ pct, count }) => (
+                  <tr key={pct}>
+                    <td style={{ ...td, color: '#fff' }}>{pct}%</td>
+                    <td style={{ ...td, textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{count.toLocaleString()}</td>
+                    <td style={{ ...td, textAlign: 'right', color: count > 0 ? '#0A84FF' : '#404040' }}>
+                      {funnelPct(count, funnel.trailerPlay)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <hr style={divider} />
+
+        {/* ── Sources ─────────────────────────────────────────────────────── */}
+        <section>
+          <h2 style={{ ...sectionHead, marginBottom: '24px' }}>Sources</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '2px', marginBottom: '32px' }}>
+            <div style={{ background: '#0a0a0a', padding: '24px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <span style={{ color: '#fff', fontSize: '36px', fontFamily: 'var(--font-bebas)', lineHeight: 1 }}>
+                {returnVisitCount.toLocaleString()}
+              </span>
+              <span style={{ color: '#525252', fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                Return visits
+              </span>
+            </div>
+            <div style={{ background: '#0a0a0a', padding: '24px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <span style={{ color: '#fff', fontSize: '36px', fontFamily: 'var(--font-bebas)', lineHeight: 1 }}>
+                {returnConversions.toLocaleString()}
+              </span>
+              <span style={{ color: '#525252', fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                Multi-visit conversions
+              </span>
+            </div>
+            <div style={{ background: '#0a0a0a', padding: '24px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <span style={{ color: '#fff', fontSize: '36px', fontFamily: 'var(--font-bebas)', lineHeight: 1 }}>
+                {avgSecondsToPurchase !== null
+                  ? avgSecondsToPurchase < 3600
+                    ? `${Math.round(avgSecondsToPurchase / 60)}m`
+                    : `${(avgSecondsToPurchase / 3600).toFixed(1)}h`
+                  : '—'}
+              </span>
+              <span style={{ color: '#525252', fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                Avg time to purchase
+              </span>
+            </div>
+            <div style={{ background: '#0a0a0a', padding: '24px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <span style={{ color: '#fff', fontSize: '36px', fontFamily: 'var(--font-bebas)', lineHeight: 1 }}>
+                {funnelPct(returnConversions, returnVisitCount)}
+              </span>
+              <span style={{ color: '#525252', fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                Return visitor conv. rate
+              </span>
+            </div>
+          </div>
+
+          {utmRows.length > 0 && (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>
+                    <th style={th}>UTM Source</th>
+                    <th style={{ ...th, textAlign: 'right' }}>Purchases</th>
+                    <th style={{ ...th, textAlign: 'right' }}>% of total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {utmRows.map(({ source, purchases: count }) => (
+                    <tr key={source}>
+                      <td style={{ ...td, color: '#fff' }}>{source}</td>
+                      <td style={{ ...td, textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{count}</td>
+                      <td style={{ ...td, textAlign: 'right', color: '#0A84FF' }}>
+                        {funnelPct(count, purchases.length)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </section>
 
       </div>

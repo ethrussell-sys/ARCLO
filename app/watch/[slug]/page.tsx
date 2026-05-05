@@ -7,7 +7,7 @@ import WaitlistPanel from './WaitlistPanel'
 import AgeGate from './AgeGate'
 import ShareButton from './ShareButton'
 import TrailerPlayer from './TrailerPlayer'
-import UtmCapture from './UtmCapture'
+import PageTracker from './PageTracker'
 
 function youtubeEmbedUrl(url: string): string | null {
   const match = url.match(
@@ -20,7 +20,15 @@ function youtubeEmbedUrl(url: string): string | null {
 
 export default async function WatchPage(props: {
   params: Promise<{ slug: string }>
-  searchParams: Promise<{ note?: string; from?: string; utm_source?: string; utm_medium?: string; utm_campaign?: string; utm_content?: string; utm_term?: string }>
+  searchParams: Promise<{
+    note?: string
+    from?: string
+    utm_source?: string
+    utm_medium?: string
+    utm_campaign?: string
+    utm_content?: string
+    utm_term?: string
+  }>
 }) {
   const { slug } = await props.params
   const { note, from, utm_source, utm_medium, utm_campaign, utm_content, utm_term } = await props.searchParams
@@ -48,7 +56,7 @@ export default async function WatchPage(props: {
 
   return (
     <>
-    <UtmCapture utm={utm} filmId={film.id} />
+    <PageTracker utm={utm} filmId={film.id} filmSlug={slug} />
     {film.rating === 'R' && <AgeGate slug={slug} />}
     <main style={{
       backgroundColor: '#000',
@@ -97,27 +105,37 @@ export default async function WatchPage(props: {
         )}
 
         {/* Trailer */}
-        {embedUrl && <TrailerPlayer embedUrl={embedUrl} title={`${film.title} — trailer`} filmId={film.id} />}
+        {embedUrl && (
+          <TrailerPlayer
+            embedUrl={embedUrl}
+            title={`${film.title} — trailer`}
+            filmId={film.id}
+            filmSlug={slug}
+          />
+        )}
 
         {/* Synopsis */}
         {film.description && (
-          <p style={{
-            color: 'rgba(255,255,255,0.55)',
-            fontSize: '15px',
-            textAlign: 'center',
-            lineHeight: 1.6,
-            maxWidth: '300px',
-            margin: '32px auto',
-          }}>
+          <p
+            data-track="synopsis"
+            style={{
+              color: 'rgba(255,255,255,0.55)',
+              fontSize: '15px',
+              textAlign: 'center',
+              lineHeight: 1.6,
+              maxWidth: '300px',
+              margin: '32px auto',
+            }}
+          >
             {film.description}
           </p>
         )}
 
         {/* Buy button (US) or waitlist (non-US) → note → share */}
         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{ width: '100%' }}>
+          <div data-track="buy-section" style={{ width: '100%' }}>
             {isUS
-              ? <BuyButton filmId={film.id} price={film.price} title={film.title} />
+              ? <BuyButton filmId={film.id} price={film.price} title={film.title} filmSlug={slug} />
               : <WaitlistPanel slug={slug} country={country!} />
             }
           </div>
@@ -138,7 +156,7 @@ export default async function WatchPage(props: {
             </div>
           )}
 
-          <ShareButton />
+          <ShareButton filmId={film.id} filmSlug={slug} />
         </div>
 
       </div>

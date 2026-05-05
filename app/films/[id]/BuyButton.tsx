@@ -4,8 +4,10 @@ import { useEffect, useRef, useState } from 'react'
 import { loadStripe } from '@stripe/stripe-js'
 import type { Stripe, PaymentRequest } from '@stripe/stripe-js'
 import { readUtm } from '@/lib/utm'
+import { track } from '@/lib/track'
+import { getVisitRecord } from '@/lib/session'
 
-type Props = { filmId: string; price: number; title: string }
+type Props = { filmId: string; price: number; title: string; filmSlug?: string }
 
 type Phase =
   | 'checking'
@@ -30,7 +32,7 @@ function triggerDownload(url: string, filename: string) {
   }
 }
 
-export default function BuyButton({ filmId, price, title }: Props) {
+export default function BuyButton({ filmId, price, title, filmSlug }: Props) {
   const [phase, setPhase] = useState<Phase>('checking')
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState('')
@@ -116,6 +118,32 @@ export default function BuyButton({ filmId, price, title }: Props) {
         setDownloadUrl(url)
         setPhase('success')
         triggerDownload(url, `${title}.mp4`)
+
+        if (filmSlug) {
+          sessionStorage.setItem(`arclo_purchased_${filmSlug}`, '1')
+          const visit = getVisitRecord(filmSlug)
+          track({
+            event_type: 'purchase_completed',
+            film_id: filmId,
+            film_slug: filmSlug,
+            metadata: {
+              visit_count: visit.count,
+              first_visit_at: visit.firstAt,
+              seconds_to_purchase: Math.round((Date.now() - new Date(visit.firstAt).getTime()) / 1000),
+            },
+          })
+          if (visit.count > 1) {
+            track({
+              event_type: 'multi_visit_conversion',
+              film_id: filmId,
+              film_slug: filmSlug,
+              metadata: {
+                visit_count: visit.count,
+                days_to_convert: Math.floor((Date.now() - new Date(visit.firstAt).getTime()) / 86_400_000),
+              },
+            })
+          }
+        }
       })
 
       prRef.current = pr
@@ -126,6 +154,7 @@ export default function BuyButton({ filmId, price, title }: Props) {
   }, [filmId, price, title])
 
   async function handleRegularCheckout() {
+    track({ event_type: 'buy_button_click', film_id: filmId, film_slug: filmSlug })
     setPhase('processing')
     const res = await fetch('/api/checkout', {
       method: 'POST',
@@ -134,7 +163,11 @@ export default function BuyButton({ filmId, price, title }: Props) {
     })
     if (!res.ok) { setPhase('error'); setErrorMsg('Checkout failed. Please try again.'); return }
     const { url } = await res.json()
-    if (url) window.location.href = url
+    if (url) {
+      if (filmSlug) sessionStorage.setItem('arclo_checkout_slug', filmSlug)
+      track({ event_type: 'purchase_initiated', film_id: filmId, film_slug: filmSlug })
+      window.location.href = url
+    }
   }
 
   // ── Confirmation overlay ──────────────────────────────────────────────────
@@ -208,7 +241,11 @@ export default function BuyButton({ filmId, price, title }: Props) {
   if (phase === 'apple-pay' || phase === 'checking') {
     return (
       <button
-        onClick={() => prRef.current?.show()}
+        onClick={() => {
+          track({ event_type: 'buy_button_click', film_id: filmId, film_slug: filmSlug })
+          prRef.current?.show()
+        }}
+        onMouseEnter={() => track({ event_type: 'buy_button_hover', film_id: filmId, film_slug: filmSlug })}
         disabled={isProcessing || phase === 'checking'}
         className="w-full py-[18px] rounded-2xl font-semibold tracking-wide active:scale-95 transition-transform flex items-center justify-center gap-2 disabled:opacity-40"
         style={{ backgroundColor: '#000', border: '1.5px solid #333' }}
@@ -232,6 +269,7 @@ export default function BuyButton({ filmId, price, title }: Props) {
   return (
     <button
       onClick={handleRegularCheckout}
+      onMouseEnter={() => track({ event_type: 'buy_button_hover', film_id: filmId, film_slug: filmSlug })}
       disabled={isProcessing}
       className="w-full py-4 rounded-2xl text-white text-lg font-semibold tracking-wide active:scale-95 transition-transform disabled:opacity-60"
       style={{ backgroundColor: '#0A84FF' }}
