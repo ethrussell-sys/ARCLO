@@ -14,7 +14,7 @@ export async function sendPurchaseConfirmation({
   to: string
   filmTitle: string
   downloadUrl: string
-  redemptionCode: string
+  redemptionCode?: string
 }) {
   console.log('[email] sending purchase confirmation', {
     to,

@@ -3,7 +3,7 @@ import * as React from 'react'
 type Props = {
   filmTitle: string
   downloadUrl: string
-  redemptionCode: string
+  redemptionCode?: string
 }
 
 export function PurchaseConfirmationEmail({ filmTitle, downloadUrl, redemptionCode }: Props) {
@@ -76,18 +76,20 @@ export function PurchaseConfirmationEmail({ filmTitle, downloadUrl, redemptionCo
                     </tr>
 
                     {/* Redemption code */}
-                    <tr>
-                      <td style={{ paddingBottom: '16px' }}>
-                        <p style={codeLabel}>Your permanent access code</p>
-                        <p style={codeBlock}>{redemptionCode}</p>
-                      </td>
-                    </tr>
+                    {redemptionCode && (
+                      <tr>
+                        <td style={{ paddingBottom: '16px' }}>
+                          <p style={codeLabel}>Your permanent access code</p>
+                          <p style={codeBlock}>{redemptionCode}</p>
+                        </td>
+                      </tr>
+                    )}
 
                     {/* Fine print */}
                     <tr>
                       <td>
                         <p style={finePrint}>
-                          Your download link expires in 24 hours. Use this code at arclo.com/download to generate a new one at any time.
+                          Your download link expires in 24 hours.{redemptionCode ? ' Use this code at arclo.com/download to generate a new one at any time.' : ''}
                           <br /><br />
                           Questions? Reply to this email and we&apos;ll sort it out.
                         </p>
