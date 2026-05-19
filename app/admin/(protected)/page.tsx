@@ -232,7 +232,7 @@ export default async function AdminPage() {
                     const film = p.films as { title?: string; price?: number } | null
                     const row = p as typeof p & { utm_source?: string; utm_medium?: string; utm_campaign?: string; download_count?: number; download_limit?: number }
                     const dlCount = row.download_count ?? 0
-                    const dlLimit = row.download_limit ?? 5
+                    const dlLimit = row.download_limit ?? 1
                     return (
                       <tr key={p.id}>
                         <td style={{ ...td, color: '#fff' }}>{film?.title ?? '—'}</td>

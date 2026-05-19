@@ -122,15 +122,13 @@ export default function TermsPage() {
               to download and watch the purchased film for your own private, non-commercial use.
             </p>
             <p style={body}>
-              Your license includes up to{' '}
-              <span style={strong}>3 downloads</span>{' '}
-              of the film file. Each time you use your owner link to download the film,
-              one download is deducted from your allowance. If you reach your limit and need
-              additional downloads, contact us at{' '}
+              Your license includes{' '}
+              <span style={strong}>1 download</span>{' '}
+              of the film file. If you need to re-download after losing your copy, contact us at{' '}
               <a href={`mailto:${CONTACT_EMAIL}`} style={{ color: '#0A84FF', textDecoration: 'none' }}>
                 {CONTACT_EMAIL}
               </a>
-              {' '}and we will assist you.
+              {' '}and we will assist you on a case-by-case basis.
             </p>
             <p style={body}>
               Your owner link is permanent and does not expire. Keep it somewhere safe — it is

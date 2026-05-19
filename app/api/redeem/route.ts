@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     )
   }
 
-  const limit = purchase.download_limit ?? 5
+  const limit = purchase.download_limit ?? 1
   const count = purchase.download_count ?? 0
 
   if (count >= limit) {
