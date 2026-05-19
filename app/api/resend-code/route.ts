@@ -1,6 +1,6 @@
 import { serverClient } from '@/lib/supabase'
-import { presignedDownloadUrl } from '@/lib/s3'
 import { sendPurchaseConfirmation } from '@/lib/emails/send'
+import { generateDownloadToken } from '@/lib/download-token'
 
 export async function POST(request: Request) {
   const { email } = await request.json()
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
 
   const { data: rows } = await serverClient()
     .from('purchases')
-    .select('id, film_id, email, redemption_code')
+    .select('id, film_id, email, redemption_code, download_token')
     .ilike('email', normalizedEmail)
     .not('redemption_code', 'is', null)
     .order('created_at', { ascending: false })
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
 
   const { data: film } = await serverClient()
     .from('films')
-    .select('title, file_key')
+    .select('title')
     .eq('id', purchase.film_id)
     .single()
 
@@ -35,12 +35,23 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Film not found.' }, { status: 404 })
   }
 
-  const downloadUrl = await presignedDownloadUrl(film.file_key)
+  // Back-fill token for purchases made before the download_token migration
+  let token = purchase.download_token
+  if (!token) {
+    token = generateDownloadToken()
+    await serverClient()
+      .from('purchases')
+      .update({ download_token: token })
+      .eq('id', purchase.id)
+  }
+
+  const origin = new URL(request.url).origin
+  const ownerLink = `${origin}/api/download?token=${token}`
 
   await sendPurchaseConfirmation({
     to: purchase.email,
     filmTitle: film.title,
-    downloadUrl,
+    ownerLink,
     redemptionCode: purchase.redemption_code,
   })
 

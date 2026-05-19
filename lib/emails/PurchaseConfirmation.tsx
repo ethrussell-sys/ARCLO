@@ -2,11 +2,11 @@ import * as React from 'react'
 
 type Props = {
   filmTitle: string
-  downloadUrl: string
+  ownerLink: string
   redemptionCode?: string
 }
 
-export function PurchaseConfirmationEmail({ filmTitle, downloadUrl, redemptionCode }: Props) {
+export function PurchaseConfirmationEmail({ filmTitle, ownerLink, redemptionCode }: Props) {
   return (
     <html lang="en">
       <head>
@@ -54,7 +54,7 @@ export function PurchaseConfirmationEmail({ filmTitle, downloadUrl, redemptionCo
                     <tr>
                       <td style={{ paddingBottom: '24px' }}>
                         <p style={instruction}>
-                          Your download link is ready. Tap below to save the film to your device.
+                          Your permanent owner link is below. Bookmark it — it never expires.
                         </p>
                       </td>
                     </tr>
@@ -62,7 +62,7 @@ export function PurchaseConfirmationEmail({ filmTitle, downloadUrl, redemptionCo
                     {/* CTA */}
                     <tr>
                       <td style={{ paddingBottom: '40px' }}>
-                        <a href={downloadUrl} style={button}>
+                        <a href={ownerLink} style={button}>
                           Download {filmTitle}
                         </a>
                       </td>
@@ -89,7 +89,7 @@ export function PurchaseConfirmationEmail({ filmTitle, downloadUrl, redemptionCo
                     <tr>
                       <td>
                         <p style={finePrint}>
-                          Your download link expires in 24 hours.{redemptionCode ? ' Use this code at arclo.com/download to generate a new one at any time.' : ''}
+                          Your owner link is permanent — bookmark it and come back any time.{redemptionCode ? ' You can also use the code above at arclo.com/download as a backup.' : ''}
                           <br /><br />
                           Questions? Reply to this email and we&apos;ll sort it out.
                         </p>

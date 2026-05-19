@@ -3,6 +3,7 @@ import { serverClient } from '@/lib/supabase'
 import { presignedDownloadUrl } from '@/lib/s3'
 import { sendPurchaseConfirmation } from '@/lib/emails/send'
 import { generateRedemptionCode } from '@/lib/redemption-code'
+import { generateDownloadToken } from '@/lib/download-token'
 
 export async function POST(request: Request) {
   const { paymentIntentId, email } = await request.json()
@@ -32,15 +33,18 @@ export async function POST(request: Request) {
   const downloadUrl = await presignedDownloadUrl(film.file_key)
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
 
-  // Preserve existing redemption code on re-attempts; generate one for new purchases
+  // Preserve existing redemption code and download token on re-attempts
   const { data: existing } = await serverClient()
     .from('purchases')
-    .select('redemption_code')
+    .select('redemption_code, download_token')
     .eq('stripe_payment_id', paymentIntentId)
     .maybeSingle()
 
   const isNew = !existing
   const redemptionCode = existing?.redemption_code ?? generateRedemptionCode()
+  const downloadToken = existing?.download_token ?? generateDownloadToken()
+  const origin = new URL(request.url).origin
+  const ownerLink = `${origin}/api/download?token=${downloadToken}`
 
   await serverClient()
     .from('purchases')
@@ -52,13 +56,14 @@ export async function POST(request: Request) {
         download_url: downloadUrl,
         expires_at: expiresAt,
         redemption_code: redemptionCode,
+        download_token: downloadToken,
       },
       { onConflict: 'stripe_payment_id', ignoreDuplicates: false }
     )
 
-  // Send email without blocking the response — download URL is the critical path
+  // Send email without blocking the response — owner link is the critical path
   if (email && isNew) {
-    sendPurchaseConfirmation({ to: email, filmTitle: film.title, downloadUrl, redemptionCode }).catch(
+    sendPurchaseConfirmation({ to: email, filmTitle: film.title, ownerLink, redemptionCode }).catch(
       (err) => console.error('Purchase email failed:', err)
     )
   }

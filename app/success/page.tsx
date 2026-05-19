@@ -3,12 +3,14 @@ import { getStripe } from '@/lib/stripe'
 import { serverClient } from '@/lib/supabase'
 import { presignedDownloadUrl } from '@/lib/s3'
 import { sendPurchaseConfirmation } from '@/lib/emails/send'
+import { generateRedemptionCode } from '@/lib/redemption-code'
+import { generateDownloadToken } from '@/lib/download-token'
 import { ID_TO_SLUG } from '@/lib/slug-map'
 import DownloadButton from './DownloadButton'
 import ShareSection from './ShareSection'
 import PurchaseTracker from './PurchaseTracker'
 
-async function getOrCreatePurchase(sessionId: string) {
+async function getOrCreatePurchase(sessionId: string, origin: string) {
   const session = await getStripe().checkout.sessions.retrieve(sessionId)
 
   if (session.payment_status !== 'paid') return null
@@ -30,11 +32,14 @@ async function getOrCreatePurchase(sessionId: string) {
   // Check if this purchase already exists to avoid resending the email on refresh
   const { data: existing } = await serverClient()
     .from('purchases')
-    .select('id')
+    .select('id, redemption_code, download_token')
     .eq('stripe_payment_id', paymentIntentId)
-    .single()
+    .maybeSingle()
 
   const isNew = !existing
+  const redemptionCode = existing?.redemption_code ?? generateRedemptionCode()
+  const downloadToken = existing?.download_token ?? generateDownloadToken()
+  const ownerLink = `${origin}/api/download?token=${downloadToken}`
 
   const downloadUrl = await presignedDownloadUrl(film.file_key)
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
@@ -48,12 +53,14 @@ async function getOrCreatePurchase(sessionId: string) {
         stripe_payment_id: paymentIntentId,
         download_url: downloadUrl,
         expires_at: expiresAt,
+        redemption_code: redemptionCode,
+        download_token: downloadToken,
       },
       { onConflict: 'stripe_payment_id', ignoreDuplicates: false }
     )
 
   if (isNew) {
-    sendPurchaseConfirmation({ to: email, filmTitle: film.title, downloadUrl }).catch(
+    sendPurchaseConfirmation({ to: email, filmTitle: film.title, ownerLink, redemptionCode }).catch(
       (err) => console.error('Purchase email failed:', err)
     )
   }
@@ -69,7 +76,8 @@ export default async function SuccessPage(props: {
 
   if (!session_id) redirect('/')
 
-  const result = await getOrCreatePurchase(session_id)
+  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_BASE_URL ?? ''
+  const result = await getOrCreatePurchase(session_id, origin)
 
   if (!result) {
     return (

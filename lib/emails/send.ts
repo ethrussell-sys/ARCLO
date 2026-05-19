@@ -8,12 +8,12 @@ const FROM = 'ARCLO <onboarding@resend.dev>'
 export async function sendPurchaseConfirmation({
   to,
   filmTitle,
-  downloadUrl,
+  ownerLink,
   redemptionCode,
 }: {
   to: string
   filmTitle: string
-  downloadUrl: string
+  ownerLink: string
   redemptionCode?: string
 }) {
   console.log('[email] sending purchase confirmation', {
@@ -28,7 +28,7 @@ export async function sendPurchaseConfirmation({
     from: FROM,
     to,
     subject: `You own ${filmTitle} — download it now`,
-    react: React.createElement(PurchaseConfirmationEmail, { filmTitle, downloadUrl, redemptionCode }),
+    react: React.createElement(PurchaseConfirmationEmail, { filmTitle, ownerLink, redemptionCode }),
   })
 
   if (error) {
