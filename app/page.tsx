@@ -162,6 +162,14 @@ export default async function HomePage() {
         <p style={{ color: '#404040', fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', margin: '8px 0 0' }}>
           The films that matter.
         </p>
+        <div style={{ marginTop: '24px', display: 'flex', gap: '20px' }}>
+          <Link
+            href="/terms"
+            style={{ color: '#2a2a2a', fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', textDecoration: 'none' }}
+          >
+            Terms of Service
+          </Link>
+        </div>
       </footer>
 
     </main>
