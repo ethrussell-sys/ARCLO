@@ -7,6 +7,7 @@ type Film = {
   title: string
   director: string | null
   year: number | null
+  rating: string | null
   contact_email: string | null
   created_at: string
 }
@@ -73,6 +74,7 @@ export default function SubmissionsTable({ films }: { films: Film[] }) {
             <th style={th}>Title</th>
             <th style={th}>Director</th>
             <th style={th}>Year</th>
+            <th style={th}>Rating</th>
             <th style={th}>Email</th>
             <th style={th}>Submitted</th>
             <th style={th}></th>
@@ -86,6 +88,22 @@ export default function SubmissionsTable({ films }: { films: Film[] }) {
                 <td style={{ ...td, color: '#fff', fontWeight: 500 }}>{film.title}</td>
                 <td style={{ ...td, color: '#a3a3a3' }}>{film.director ?? '—'}</td>
                 <td style={{ ...td, color: '#a3a3a3' }}>{film.year ?? '—'}</td>
+                <td style={{ ...td }}>
+                  {film.rating ? (
+                    <span style={{
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      letterSpacing: '0.06em',
+                      color: '#fff',
+                      backgroundColor: '#1a1a1a',
+                      border: '1px solid #333',
+                      borderRadius: '4px',
+                      padding: '2px 7px',
+                    }}>
+                      {film.rating}
+                    </span>
+                  ) : '—'}
+                </td>
                 <td style={{ ...td, color: '#a3a3a3' }}>{film.contact_email ?? '—'}</td>
                 <td style={{ ...td, color: '#525252', whiteSpace: 'nowrap' }}>
                   {new Date(film.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}

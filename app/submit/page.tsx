@@ -6,6 +6,8 @@ type Phase = 'form' | 'uploading' | 'saving' | 'success' | 'error'
 
 const CURRENT_YEAR = new Date().getFullYear()
 const DESC_MAX = 200
+const RATINGS = ['G', 'PG', 'PG-13', 'R', 'NC-17'] as const
+type Rating = typeof RATINGS[number]
 
 const inputStyle: React.CSSProperties = {
   background: 'transparent',
@@ -35,6 +37,8 @@ export default function SubmitPage() {
   const [error, setError] = useState('')
   const [descLen, setDescLen] = useState(0)
   const [fileName, setFileName] = useState('')
+  const [rating, setRating] = useState<Rating | ''>('')
+  const [licensed, setLicensed] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -45,6 +49,8 @@ export default function SubmitPage() {
     const file = fileRef.current?.files?.[0]
 
     if (!file) { setError('Please select the film file.'); return }
+    if (!rating) { setError('Please select a content rating.'); return }
+    if (!licensed) { setError('Please confirm the licensing declaration before submitting.'); return }
 
     const year = Number(fd.get('year'))
     if (year && (year < 1888 || year > CURRENT_YEAR)) {
@@ -96,6 +102,7 @@ export default function SubmitPage() {
           description: fd.get('description'),
           trailerUrl: fd.get('trailerUrl'),
           contactEmail: fd.get('contactEmail'),
+          rating,
           fileKey,
         }),
       })
@@ -257,6 +264,37 @@ export default function SubmitPage() {
             />
           </div>
 
+          {/* Content rating */}
+          <div>
+            <label style={labelStyle}>Content rating *</label>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px' }}>
+              {RATINGS.map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => setRating(r)}
+                  style={{
+                    padding: '7px 16px',
+                    borderRadius: '6px',
+                    border: `1px solid ${rating === r ? '#0A84FF' : '#2a2a2a'}`,
+                    backgroundColor: rating === r ? '#0A84FF' : 'transparent',
+                    color: rating === r ? '#ffffff' : '#525252',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    letterSpacing: '0.04em',
+                    cursor: 'pointer',
+                    transition: 'border-color 0.15s, background-color 0.15s, color 0.15s',
+                  }}
+                >
+                  {r}
+                </button>
+              ))}
+            </div>
+            <p style={{ color: '#404040', fontSize: '11px', marginTop: '10px', marginBottom: 0, lineHeight: 1.5 }}>
+              Self-declared by the filmmaker based on MPA content guidelines.
+            </p>
+          </div>
+
           {/* Film file */}
           <div>
             <label style={labelStyle}>Film file * (MP4, MOV, or MKV)</label>
@@ -291,6 +329,26 @@ export default function SubmitPage() {
           {/* Divider */}
           <div style={{ borderTop: '1px solid #1c1c1c' }} />
 
+          {/* Licensing declaration */}
+          <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer' }}>
+            <input
+              type="checkbox"
+              checked={licensed}
+              onChange={(e) => setLicensed(e.target.checked)}
+              style={{
+                marginTop: '2px',
+                width: '16px',
+                height: '16px',
+                flexShrink: 0,
+                accentColor: '#0A84FF',
+                cursor: 'pointer',
+              }}
+            />
+            <span style={{ color: licensed ? '#a3a3a3' : '#525252', fontSize: '13px', lineHeight: 1.6, transition: 'color 0.15s' }}>
+              I confirm the content rating above is accurate and that all music and other third-party content in this film is licensed for commercial digital distribution.
+            </span>
+          </label>
+
           {/* Submit */}
           <button
             type="submit"
@@ -299,10 +357,6 @@ export default function SubmitPage() {
           >
             Submit film
           </button>
-
-          <p style={{ color: '#404040', fontSize: '12px', margin: 0, lineHeight: 1.6 }}>
-            By submitting, you confirm you hold the rights to distribute this film.
-          </p>
 
         </form>
       </div>

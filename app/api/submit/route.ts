@@ -4,11 +4,16 @@ import { FilmSubmissionEmail } from '@/lib/emails/FilmSubmission'
 import * as React from 'react'
 
 export async function POST(request: Request) {
-  const { title, director, year, description, trailerUrl, contactEmail, fileKey } =
+  const { title, director, year, description, trailerUrl, contactEmail, rating, fileKey } =
     await request.json()
+
+  const VALID_RATINGS = ['G', 'PG', 'PG-13', 'R', 'NC-17']
 
   if (!title || !fileKey || !contactEmail) {
     return Response.json({ error: 'title, fileKey, and contactEmail are required' }, { status: 400 })
+  }
+  if (!rating || !VALID_RATINGS.includes(rating)) {
+    return Response.json({ error: 'A valid content rating is required' }, { status: 400 })
   }
 
   const { error: dbError } = await serverClient()
@@ -20,6 +25,7 @@ export async function POST(request: Request) {
       description: description || null,
       trailer_url: trailerUrl || null,
       contact_email: contactEmail,
+      rating,
       file_key: fileKey,
       status: 'pending',
       price: 1.99,

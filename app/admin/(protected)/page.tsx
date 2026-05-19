@@ -14,7 +14,7 @@ async function getData() {
     { count: completedPurchases },
   ] = await Promise.all([
     db.from('films')
-      .select('id, title, director, year, contact_email, created_at')
+      .select('id, title, director, year, rating, contact_email, created_at')
       .eq('status', 'pending')
       .order('created_at', { ascending: false }),
 
