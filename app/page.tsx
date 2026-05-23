@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { serverClient } from '@/lib/supabase'
 
+export const dynamic = 'force-dynamic'
+
 async function getLiveFilms() {
   const { data } = await serverClient()
     .from('films')
