@@ -1,8 +1,9 @@
 'use client'
 
 import { useRef, useState, ChangeEvent, FormEvent } from 'react'
+import { useRouter } from 'next/navigation'
 
-type Phase = 'form' | 'uploading' | 'saving' | 'success' | 'error'
+type Phase = 'form' | 'uploading' | 'saving' | 'error'
 
 const CURRENT_YEAR = new Date().getFullYear()
 const DESC_MAX = 200
@@ -32,6 +33,7 @@ const labelStyle: React.CSSProperties = {
 }
 
 export default function SubmitPage() {
+  const router = useRouter()
   const [phase, setPhase] = useState<Phase>('form')
   const [progress, setProgress] = useState(0)
   const [error, setError] = useState('')
@@ -109,41 +111,11 @@ export default function SubmitPage() {
 
       if (!submitRes.ok) throw new Error('Submission failed. Please try again.')
 
-      setPhase('success')
+      router.replace('/submit/success')
     } catch (err) {
       setPhase('error')
       setError(err instanceof Error ? err.message : 'Something went wrong.')
     }
-  }
-
-  // ── Success ──────────────────────────────────────────────────────────────
-  if (phase === 'success') {
-    return (
-      <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6 text-center">
-        <div className="flex flex-col items-center gap-8 max-w-sm">
-          <div
-            className="w-16 h-16 rounded-full flex items-center justify-center animate-pop-in"
-            style={{ backgroundColor: '#0A84FF' }}
-          >
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-          </div>
-          <div className="flex flex-col gap-3">
-            <h1
-              className="text-5xl uppercase tracking-tight"
-              style={{ fontFamily: 'var(--font-bebas)' }}
-            >
-              Film submitted.
-            </h1>
-            <p className="text-neutral-400 text-base leading-relaxed">
-              We&apos;ll be in touch within 24 hours.
-            </p>
-          </div>
-          <p className="text-neutral-700 text-xs">Check your email for a confirmation.</p>
-        </div>
-      </main>
-    )
   }
 
   // ── Uploading / saving ───────────────────────────────────────────────────
