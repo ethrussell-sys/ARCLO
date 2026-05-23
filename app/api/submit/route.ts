@@ -3,6 +3,21 @@ import { getResend } from '@/lib/resend'
 import { FilmSubmissionEmail } from '@/lib/emails/FilmSubmission'
 import * as React from 'react'
 
+function toSlug(title: string): string {
+  return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+}
+
+async function uniqueSlug(base: string): Promise<string> {
+  const db = serverClient()
+  let candidate = base
+  let suffix = 2
+  while (true) {
+    const { data } = await db.from('films').select('id').eq('slug', candidate).maybeSingle()
+    if (!data) return candidate
+    candidate = `${base}-${suffix++}`
+  }
+}
+
 export async function POST(request: Request) {
   const { title, director, year, description, trailerUrl, contactEmail, rating, fileKey } =
     await request.json()
@@ -16,10 +31,13 @@ export async function POST(request: Request) {
     return Response.json({ error: 'A valid content rating is required' }, { status: 400 })
   }
 
+  const slug = await uniqueSlug(toSlug(title))
+
   const { error: dbError } = await serverClient()
     .from('films')
     .insert({
       title,
+      slug,
       director: director || null,
       year: year || null,
       description: description || null,

@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { headers } from 'next/headers'
 import { serverClient } from '@/lib/supabase'
-import { SLUG_TO_ID } from '@/lib/slug-map'
 import BuyButton from '@/app/films/[id]/BuyButton'
 import WaitlistPanel from './WaitlistPanel'
 import AgeGate from './AgeGate'
@@ -14,13 +13,11 @@ export async function generateMetadata(
   props: { params: Promise<{ slug: string }> }
 ): Promise<Metadata> {
   const { slug } = await props.params
-  const filmId = SLUG_TO_ID[slug]
-  if (!filmId) return {}
 
   const { data: film } = await serverClient()
     .from('films')
     .select('title, director, year, description, thumbnail_url')
-    .eq('id', filmId)
+    .eq('slug', slug)
     .single()
 
   if (!film) return {}
@@ -78,13 +75,11 @@ export default async function WatchPage(props: {
   const utm = { utm_source, utm_medium, utm_campaign, utm_content, utm_term }
   const country = (await headers()).get('x-vercel-ip-country')
   const isUS = !country || country === 'US'
-  const filmId = SLUG_TO_ID[slug]
-  if (!filmId) notFound()
 
   const { data: film } = await serverClient()
     .from('films')
     .select('id, title, director, year, price, trailer_url, description, rating')
-    .eq('id', filmId)
+    .eq('slug', slug)
     .single()
 
   if (!film) notFound()

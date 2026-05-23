@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { serverClient } from '@/lib/supabase'
-import { ID_TO_SLUG } from '@/lib/slug-map'
 import BuyButton from './BuyButton'
 import ShareButton from '@/app/watch/[slug]/ShareButton'
 
@@ -12,14 +11,14 @@ export async function generateMetadata(
 
   const { data: film } = await serverClient()
     .from('films')
-    .select('id, title, director, year, description, thumbnail_url')
+    .select('id, title, director, year, description, thumbnail_url, slug')
     .eq('id', id)
     .single()
 
   if (!film) return {}
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? ''
-  const slug = ID_TO_SLUG[film.id]
+  const slug = film.slug as string | null
   const pageUrl = slug ? `${siteUrl}/watch/${slug}` : `${siteUrl}/films/${id}`
   const image = film.thumbnail_url ?? undefined
 
@@ -67,7 +66,7 @@ export default async function FilmPage(props: {
   if (!film) notFound()
 
   const embedUrl = film.trailer_url ? youtubeEmbedUrl(film.trailer_url) : null
-  const slug = ID_TO_SLUG[film.id]
+  const slug = (film.slug as string | null) ?? null
 
   return (
     <main style={{ minHeight: '100vh', backgroundColor: '#000', color: '#fff', display: 'flex', flexDirection: 'column', paddingBottom: '180px' }}>
