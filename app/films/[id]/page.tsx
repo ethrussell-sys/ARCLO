@@ -152,7 +152,7 @@ export default async function FilmPage(props: {
         <div style={{ paddingLeft: '32px', paddingRight: '32px' }}>
           <ShareButton
             filmId={film.id}
-            filmSlug={slug}
+            filmSlug={slug ?? undefined}
             sharePath={slug ? `/watch/${slug}` : undefined}
           />
         </div>
