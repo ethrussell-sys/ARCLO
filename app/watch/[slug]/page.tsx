@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { headers } from 'next/headers'
 import { serverClient } from '@/lib/supabase'
@@ -8,6 +9,48 @@ import AgeGate from './AgeGate'
 import ShareButton from './ShareButton'
 import TrailerPlayer from './TrailerPlayer'
 import PageTracker from './PageTracker'
+
+export async function generateMetadata(
+  props: { params: Promise<{ slug: string }> }
+): Promise<Metadata> {
+  const { slug } = await props.params
+  const filmId = SLUG_TO_ID[slug]
+  if (!filmId) return {}
+
+  const { data: film } = await serverClient()
+    .from('films')
+    .select('title, director, year, description, thumbnail_url')
+    .eq('id', filmId)
+    .single()
+
+  if (!film) return {}
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? ''
+  const pageUrl = `${siteUrl}/watch/${slug}`
+  const image = film.thumbnail_url ?? undefined
+
+  const byline = [film.director, film.year].filter(Boolean).join(', ')
+  const description = [byline, film.description].filter(Boolean).join(' — ')
+
+  return {
+    title: film.title,
+    description,
+    openGraph: {
+      title: film.title,
+      description,
+      url: pageUrl,
+      siteName: 'ARCLO',
+      type: 'website',
+      ...(image && { images: [{ url: image, alt: film.title }] }),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: film.title,
+      description,
+      ...(image && { images: [image] }),
+    },
+  }
+}
 
 function youtubeEmbedUrl(url: string): string | null {
   const match = url.match(
@@ -131,7 +174,10 @@ export default async function WatchPage(props: {
           </p>
         )}
 
-        {/* Buy button (US) or waitlist (non-US) → note → share */}
+        {/* Share */}
+        <ShareButton filmId={film.id} filmSlug={slug} />
+
+        {/* Buy button (US) or waitlist (non-US) → incoming note */}
         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div data-track="buy-section" style={{ width: '100%' }}>
             {isUS
@@ -155,8 +201,6 @@ export default async function WatchPage(props: {
               {from && <span>{from}</span>}
             </div>
           )}
-
-          <ShareButton filmId={film.id} filmSlug={slug} />
         </div>
 
       </div>

@@ -1,6 +1,50 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { serverClient } from '@/lib/supabase'
+import { ID_TO_SLUG } from '@/lib/slug-map'
 import BuyButton from './BuyButton'
+import ShareButton from '@/app/watch/[slug]/ShareButton'
+
+export async function generateMetadata(
+  props: { params: Promise<{ id: string }> }
+): Promise<Metadata> {
+  const { id } = await props.params
+
+  const { data: film } = await serverClient()
+    .from('films')
+    .select('id, title, director, year, description, thumbnail_url')
+    .eq('id', id)
+    .single()
+
+  if (!film) return {}
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? ''
+  const slug = ID_TO_SLUG[film.id]
+  const pageUrl = slug ? `${siteUrl}/watch/${slug}` : `${siteUrl}/films/${id}`
+  const image = film.thumbnail_url ?? undefined
+
+  const byline = [film.director, film.year].filter(Boolean).join(', ')
+  const description = [byline, film.description].filter(Boolean).join(' — ')
+
+  return {
+    title: film.title,
+    description,
+    openGraph: {
+      title: film.title,
+      description,
+      url: pageUrl,
+      siteName: 'ARCLO',
+      type: 'website',
+      ...(image && { images: [{ url: image, alt: film.title }] }),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: film.title,
+      description,
+      ...(image && { images: [image] }),
+    },
+  }
+}
 
 function youtubeEmbedUrl(url: string): string | null {
   const match = url.match(
@@ -23,9 +67,10 @@ export default async function FilmPage(props: {
   if (!film) notFound()
 
   const embedUrl = film.trailer_url ? youtubeEmbedUrl(film.trailer_url) : null
+  const slug = ID_TO_SLUG[film.id]
 
   return (
-    <main style={{ minHeight: '100vh', backgroundColor: '#000', color: '#fff', display: 'flex', flexDirection: 'column', paddingBottom: '160px' }}>
+    <main style={{ minHeight: '100vh', backgroundColor: '#000', color: '#fff', display: 'flex', flexDirection: 'column', paddingBottom: '180px' }}>
 
       {/* ── Hero ── */}
       <div className="film-hero" style={{ position: 'relative', width: '100%', backgroundColor: '#0a0a0a', flexShrink: 0 }}>
@@ -105,6 +150,14 @@ export default async function FilmPage(props: {
           </div>
         )}
 
+        <div style={{ paddingLeft: '32px', paddingRight: '32px' }}>
+          <ShareButton
+            filmId={film.id}
+            filmSlug={slug}
+            sharePath={slug ? `/watch/${slug}` : undefined}
+          />
+        </div>
+
       </div>
 
       {/* ── Buy button fixed to bottom ── */}
@@ -115,8 +168,11 @@ export default async function FilmPage(props: {
         right: 0,
         padding: '24px 24px 32px',
         background: 'linear-gradient(to top, #000 60%, transparent)',
+        pointerEvents: 'none',
       }}>
-        <BuyButton filmId={film.id} price={film.price} title={film.title} />
+        <div style={{ pointerEvents: 'auto' }}>
+          <BuyButton filmId={film.id} price={film.price} title={film.title} />
+        </div>
       </div>
 
     </main>
