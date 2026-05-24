@@ -1,7 +1,6 @@
 'use client'
 
 import { useRef, useState, ChangeEvent, FormEvent } from 'react'
-import { useRouter } from 'next/navigation'
 
 type Phase = 'form' | 'uploading' | 'saving' | 'error'
 
@@ -33,7 +32,6 @@ const labelStyle: React.CSSProperties = {
 }
 
 export default function SubmitPage() {
-  const router = useRouter()
   const [phase, setPhase] = useState<Phase>('form')
   const [progress, setProgress] = useState(0)
   const [error, setError] = useState('')
@@ -109,9 +107,12 @@ export default function SubmitPage() {
         }),
       })
 
-      if (!submitRes.ok) throw new Error('Submission failed. Please try again.')
+      if (!submitRes.ok) {
+        const body = await submitRes.json().catch(() => ({}))
+        throw new Error(body.error ?? 'Submission failed. Please try again.')
+      }
 
-      router.replace('/submit/success')
+      window.location.replace('/submit/success')
     } catch (err) {
       setPhase('error')
       setError(err instanceof Error ? err.message : 'Something went wrong.')
