@@ -19,19 +19,25 @@ async function uniqueSlug(base: string): Promise<string> {
 }
 
 export async function POST(request: Request) {
-  const { title, director, year, description, trailerUrl, contactEmail, rating, fileKey } =
-    await request.json()
+  const body = await request.json()
+  console.log('[submit] received body:', JSON.stringify({ ...body, fileKey: body.fileKey?.slice(0, 40) }))
+
+  const { title, director, year, description, trailerUrl, contactEmail, rating, fileKey } = body
 
   const VALID_RATINGS = ['G', 'PG', 'PG-13', 'R', 'NC-17']
 
   if (!title || !fileKey || !contactEmail) {
+    console.log('[submit] validation failed — missing fields:', { title: !!title, fileKey: !!fileKey, contactEmail: !!contactEmail })
     return Response.json({ error: 'title, fileKey, and contactEmail are required' }, { status: 400 })
   }
   if (!rating || !VALID_RATINGS.includes(rating)) {
+    console.log('[submit] validation failed — bad rating:', rating)
     return Response.json({ error: 'A valid content rating is required' }, { status: 400 })
   }
 
+  console.log('[submit] generating slug for:', title)
   const slug = await uniqueSlug(toSlug(title))
+  console.log('[submit] slug:', slug)
 
   const { error: dbError } = await serverClient()
     .from('films')
@@ -50,9 +56,11 @@ export async function POST(request: Request) {
     })
 
   if (dbError) {
-    console.error('[submit] supabase insert error:', dbError)
-    return Response.json({ error: 'Failed to save submission' }, { status: 500 })
+    console.error('[submit] supabase insert error:', JSON.stringify(dbError))
+    return Response.json({ error: `Failed to save submission: ${dbError.message}` }, { status: 500 })
   }
+
+  console.log('[submit] DB insert succeeded, sending email to:', contactEmail)
 
   const { error: emailError } = await getResend().emails.send({
     from: 'ARCLO <onboarding@resend.dev>',
@@ -68,5 +76,6 @@ export async function POST(request: Request) {
     console.error('[submit] confirmation email failed:', JSON.stringify(emailError))
   }
 
+  console.log('[submit] done — returning ok')
   return Response.json({ ok: true })
 }
