@@ -236,7 +236,7 @@ export default async function WatchPage(props: {
         padding: '0 24px 32px',
         margin: 0,
       }}>
-        © 2025 ARCLO
+        © 2026 ARCLO
       </p>
 
     </main>
