@@ -74,7 +74,8 @@ export default async function WatchPage(props: {
   const { note, from, utm_source, utm_medium, utm_campaign, utm_content, utm_term } = await props.searchParams
   const utm = { utm_source, utm_medium, utm_campaign, utm_content, utm_term }
   const country = (await headers()).get('x-vercel-ip-country')
-  const isUS = !country || country === 'US'
+  // const isUS = !country || country === 'US' // re-enable before launch
+  const isUS = true
 
   const { data: film } = await serverClient()
     .from('films')
