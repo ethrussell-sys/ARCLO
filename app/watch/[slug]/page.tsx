@@ -86,6 +86,7 @@ export default async function WatchPage(props: {
   if (!film) notFound()
 
   const embedUrl = film.trailer_url ? youtubeEmbedUrl(film.trailer_url) : null
+  const directVideoUrl = !embedUrl && film.trailer_url ? film.trailer_url : null
 
   const meta = [
     film.director,
@@ -151,6 +152,21 @@ export default async function WatchPage(props: {
             filmId={film.id}
             filmSlug={slug}
           />
+        )}
+        {directVideoUrl && (
+          <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%' }}>
+            <div style={{ position: 'absolute', inset: 0, borderRadius: '12px', overflow: 'hidden', backgroundColor: '#0a0a0a' }}>
+              <video
+                src={directVideoUrl}
+                autoPlay
+                muted
+                loop
+                playsInline
+                controls
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            </div>
+          </div>
         )}
 
         {/* Synopsis */}
