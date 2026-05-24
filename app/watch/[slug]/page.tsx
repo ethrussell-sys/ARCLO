@@ -117,6 +117,17 @@ export default async function WatchPage(props: {
         gap: '20px',
       }}>
 
+        {/* Wordmark */}
+        <span style={{
+          fontFamily: 'var(--font-bebas)',
+          fontSize: '13px',
+          letterSpacing: '0.3em',
+          textTransform: 'uppercase',
+          color: 'rgba(255,255,255,0.25)',
+        }}>
+          ARCLO
+        </span>
+
         {/* Title */}
         <h1 style={{
           fontFamily: 'var(--font-bebas)',
