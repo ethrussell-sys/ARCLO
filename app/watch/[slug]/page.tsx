@@ -227,6 +227,18 @@ export default async function WatchPage(props: {
         </div>
 
       </div>
+
+      <p style={{
+        color: 'rgba(255,255,255,0.15)',
+        fontSize: '11px',
+        letterSpacing: '0.05em',
+        textAlign: 'center',
+        padding: '0 24px 32px',
+        margin: 0,
+      }}>
+        © 2025 ARCLO
+      </p>
+
     </main>
     </>
   )
