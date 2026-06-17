@@ -52,6 +52,10 @@ function youtubeEmbedUrl(url: string): string | null {
   return match ? `https://www.youtube.com/embed/${match[1]}?rel=0&modestbranding=1` : null
 }
 
+function isDirectVideoUrl(url: string): boolean {
+  return /\.(mp4|mov|webm|ogg)(\?.*)?$/i.test(url)
+}
+
 export default async function FilmPage(props: {
   params: Promise<{ id: string }>
 }) {
@@ -66,6 +70,7 @@ export default async function FilmPage(props: {
   if (!film) notFound()
 
   const embedUrl = film.trailer_url ? youtubeEmbedUrl(film.trailer_url) : null
+  const directVideoUrl = !embedUrl && film.trailer_url && isDirectVideoUrl(film.trailer_url) ? film.trailer_url : null
   const slug = (film.slug as string | null) ?? null
 
   return (
@@ -144,6 +149,20 @@ export default async function FilmPage(props: {
                 style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none' }}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
+              />
+            </div>
+          </div>
+        )}
+
+        {directVideoUrl && (
+          <div style={{ marginLeft: '32px', marginRight: '32px' }}>
+            <div style={{ borderRadius: '12px', overflow: 'hidden', backgroundColor: '#0a0a0a' }}>
+              {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+              <video
+                src={directVideoUrl}
+                controls
+                playsInline
+                style={{ width: '100%', display: 'block' }}
               />
             </div>
           </div>
