@@ -27,15 +27,11 @@ export default async function HomePage() {
       }}>
 
         {/* Wordmark */}
-        <span style={{
-          color: '#525252',
-          fontSize: '12px',
-          letterSpacing: '0.25em',
-          textTransform: 'uppercase',
-          fontFamily: 'var(--font-geist-sans)',
-        }}>
-          ARCLO
-        </span>
+        <img
+          src="/solv-wordmark_2.png"
+          alt="sølv"
+          style={{ height: '28px', width: 'auto', display: 'block' }}
+        />
 
         {/* Headline + subtext + CTA — vertically centered */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -63,7 +59,7 @@ export default async function HomePage() {
             One tap.&nbsp;&nbsp;$1.99.&nbsp;&nbsp;Yours forever.
           </p>
 
-          <a
+          
             href="#films"
             className="explore-link"
             style={{ animation: 'fade-up 0.8s ease-out 0.3s both' }}
@@ -159,7 +155,7 @@ export default async function HomePage() {
       {/* ── Footer ── */}
       <footer style={{ padding: '48px 24px', borderTop: '1px solid #111' }}>
         <span style={{ fontFamily: 'var(--font-bebas)', fontSize: '28px', textTransform: 'uppercase', letterSpacing: '-0.5px' }}>
-          ARCLO
+          SØLV
         </span>
         <p style={{ color: '#404040', fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', margin: '8px 0 0' }}>
           The films that matter.
