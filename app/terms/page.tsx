@@ -2,11 +2,11 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Terms of Service — ARCLO',
+  title: 'Terms of Service — Sølv',
 }
 
 const EFFECTIVE_DATE = 'May 19, 2025'
-const CONTACT_EMAIL = 'legal@arclo.com'
+const CONTACT_EMAIL = 'legal@solvscreen.com'
 
 const section: React.CSSProperties = {
   display: 'flex',
@@ -68,7 +68,7 @@ export default function TermsPage() {
               fontFamily: 'var(--font-geist-sans)',
             }}
           >
-            ARCLO
+            S&Oslash;LV
           </Link>
         </div>
 
@@ -97,15 +97,15 @@ export default function TermsPage() {
           {/* 1. About ARCLO */}
           <div style={section}>
             <p style={sectionLabel}>1</p>
-            <h2 style={sectionHeading}>What ARCLO Is</h2>
+            <h2 style={sectionHeading}>What Sølv Is</h2>
             <p style={body}>
-              ARCLO is a platform for purchasing permanent download licenses for independent films.
+              Sølv is a platform for purchasing permanent download licenses for independent films.
               When you complete a purchase, you receive a personal license to download and watch
-              the film on your own devices. ARCLO acts as a distributor on behalf of the filmmakers
+              the film on your own devices. Sølv acts as a distributor on behalf of the filmmakers
               who submit their work to the platform.
             </p>
             <p style={body}>
-              By using ARCLO you agree to these Terms. If you do not agree, do not make a purchase
+              By using Sølv you agree to these Terms. If you do not agree, do not make a purchase
               or submit content to the platform.
             </p>
           </div>
@@ -117,7 +117,7 @@ export default function TermsPage() {
             <p style={sectionLabel}>2</p>
             <h2 style={sectionHeading}>What You Get</h2>
             <p style={body}>
-              Upon completing a purchase, ARCLO grants you a{' '}
+              Upon completing a purchase, Sølv grants you a{' '}
               <span style={strong}>personal, non-transferable, non-exclusive license</span>{' '}
               to download and watch the purchased film for your own private, non-commercial use.
             </p>
@@ -197,7 +197,7 @@ export default function TermsPage() {
             <p style={sectionLabel}>5</p>
             <h2 style={sectionHeading}>Filmmaker Submissions</h2>
             <p style={body}>
-              Filmmakers who submit content to ARCLO warrant and represent that:
+              Filmmakers who submit content to Sølv warrant and represent that:
             </p>
             <ul style={{ ...body, paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <li>
@@ -215,13 +215,13 @@ export default function TermsPage() {
               </li>
             </ul>
             <p style={body}>
-              ARCLO is not responsible for, and expressly disclaims all liability arising from,
+              Sølv is not responsible for, and expressly disclaims all liability arising from,
               any unlicensed third-party content included in submitted films. Filmmakers agree
-              to indemnify and hold harmless ARCLO from any claim, loss, or expense (including
+              to indemnify and hold harmless Sølv from any claim, loss, or expense (including
               legal fees) arising from a breach of these warranties.
             </p>
             <p style={body}>
-              ARCLO reserves the right to remove any film from the platform at any time without
+              Sølv reserves the right to remove any film from the platform at any time without
               prior notice if it receives a credible claim of infringement or otherwise deems
               removal appropriate.
             </p>
@@ -234,13 +234,13 @@ export default function TermsPage() {
             <p style={sectionLabel}>6</p>
             <h2 style={sectionHeading}>Limitation of Liability</h2>
             <p style={body}>
-              To the fullest extent permitted by applicable law, ARCLO and its operators shall
+              To the fullest extent permitted by applicable law, Sølv and its operators shall
               not be liable for any indirect, incidental, special, consequential, or punitive
               damages arising from your use of the platform or the content purchased through it,
               even if advised of the possibility of such damages.
             </p>
             <p style={body}>
-              In no event shall ARCLO&apos;s total liability to you exceed the amount you paid
+              In no event shall Sølv&apos;s total liability to you exceed the amount you paid
               for the purchase giving rise to the claim.
             </p>
           </div>
@@ -252,7 +252,7 @@ export default function TermsPage() {
             <p style={sectionLabel}>7</p>
             <h2 style={sectionHeading}>Governing Law</h2>
             <p style={body}>
-              Any dispute arising out of or relating to these Terms or your use of ARCLO shall
+              Any dispute arising out of or relating to these Terms or your use of Sølv shall
               be subject to the applicable laws of the jurisdiction in which the dispute arises.
               Nothing in these Terms limits any rights you may have under mandatory consumer
               protection legislation in your country of residence.
