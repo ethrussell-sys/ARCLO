@@ -26,7 +26,7 @@ export async function POST(request: Request) {
 
   if (contactEmail) {
     const { error: emailError } = await getResend().emails.send({
-      from: 'ARCLO <onboarding@resend.dev>',
+      from: 'Sølv <onboarding@resend.dev>',
       to: contactEmail,
       subject: `Regarding your submission — ${filmTitle}`,
       react: React.createElement(FilmRejectionEmail, {

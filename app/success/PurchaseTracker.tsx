@@ -7,10 +7,10 @@ import { getVisitRecord } from '@/lib/session'
 export default function PurchaseTracker({ filmId, filmSlug }: { filmId: string; filmSlug: string }) {
   useEffect(() => {
     // Avoid double-firing if Apple Pay already set this flag
-    const alreadyFired = sessionStorage.getItem(`arclo_purchased_${filmSlug}`)
+    const alreadyFired = sessionStorage.getItem(`solv_purchased_${filmSlug}`)
     if (alreadyFired) return
 
-    sessionStorage.setItem(`arclo_purchased_${filmSlug}`, '1')
+    sessionStorage.setItem(`solv_purchased_${filmSlug}`, '1')
 
     const visit = getVisitRecord(filmSlug)
     const secondsToPurchase = Math.round(

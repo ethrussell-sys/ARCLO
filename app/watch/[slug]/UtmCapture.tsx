@@ -9,7 +9,7 @@ export default function UtmCapture({ utm, filmId }: { utm: UtmParams; filmId: st
       saveUtm(utm)
     }
 
-    const sessionKey = 'arclo_session'
+    const sessionKey = 'solv_session'
     const sessionId =
       sessionStorage.getItem(sessionKey) ??
       (() => {

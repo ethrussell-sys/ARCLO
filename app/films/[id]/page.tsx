@@ -32,7 +32,7 @@ export async function generateMetadata(
       title: film.title,
       description,
       url: pageUrl,
-      siteName: 'ARCLO',
+      siteName: 'Sølv',
       type: 'website',
       ...(image && { images: [{ url: image, alt: film.title }] }),
     },

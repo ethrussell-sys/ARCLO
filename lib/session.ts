@@ -9,12 +9,19 @@ export type VisitRecord = {
   firstAt: string
 }
 
-const SESSION_KEY = 'arclo_session'
-const VISITS_KEY = 'arclo_visits'
+const SESSION_KEY = 'solv_session'
+const LEGACY_SESSION_KEY = 'arclo_session'
+const VISITS_KEY = 'solv_visits'
+const LEGACY_VISITS_KEY = 'arclo_visits'
 
 export function getSessionId(): string {
-  const existing = localStorage.getItem(SESSION_KEY)
-  if (existing) return existing
+  // Fall back to the pre-rename key so an existing visitor's session id (and
+  // the analytics continuity tied to it) carries over instead of resetting.
+  const existing = localStorage.getItem(SESSION_KEY) ?? localStorage.getItem(LEGACY_SESSION_KEY)
+  if (existing) {
+    localStorage.setItem(SESSION_KEY, existing)
+    return existing
+  }
   const id = crypto.randomUUID()
   localStorage.setItem(SESSION_KEY, id)
   return id
@@ -47,20 +54,25 @@ export function getDeviceInfo(): DeviceInfo {
   return { device_type, browser, os }
 }
 
-export function getVisitRecord(filmSlug: string): VisitRecord {
+// Falls back to the pre-rename key so existing visitors keep their visit
+// history (return-visit / multi-visit-conversion analytics) after the rename.
+function readVisits(): Record<string, VisitRecord> {
   try {
-    const raw = localStorage.getItem(VISITS_KEY)
-    const all: Record<string, VisitRecord> = raw ? JSON.parse(raw) : {}
-    return all[filmSlug] ?? { count: 0, firstAt: new Date().toISOString() }
+    const raw = localStorage.getItem(VISITS_KEY) ?? localStorage.getItem(LEGACY_VISITS_KEY)
+    return raw ? JSON.parse(raw) : {}
   } catch {
-    return { count: 0, firstAt: new Date().toISOString() }
+    return {}
   }
+}
+
+export function getVisitRecord(filmSlug: string): VisitRecord {
+  const all = readVisits()
+  return all[filmSlug] ?? { count: 0, firstAt: new Date().toISOString() }
 }
 
 export function incrementVisit(filmSlug: string): VisitRecord {
   try {
-    const raw = localStorage.getItem(VISITS_KEY)
-    const all: Record<string, VisitRecord> = raw ? JSON.parse(raw) : {}
+    const all = readVisits()
     const existing = all[filmSlug]
     const updated: VisitRecord = existing
       ? { count: existing.count + 1, firstAt: existing.firstAt }

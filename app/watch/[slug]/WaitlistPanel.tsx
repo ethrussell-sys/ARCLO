@@ -45,7 +45,7 @@ export default function WaitlistPanel({ slug, country }: { slug: string; country
         margin: 0,
         lineHeight: 1.6,
       }}>
-        ARCLO is currently available in the US. Enter your email to be notified when we launch in your region.
+        Sølv is currently available in the US. Enter your email to be notified when we launch in your region.
       </p>
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>

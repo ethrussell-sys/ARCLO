@@ -40,7 +40,7 @@ export default function AgeGate({ slug }: { slug: string }) {
         textTransform: 'uppercase',
         fontFamily: 'var(--font-geist-sans)',
       }}>
-        ARCLO
+        S&Oslash;LV
       </span>
 
       <div style={{

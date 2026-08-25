@@ -1,13 +1,14 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { isValidToken, ADMIN_COOKIE } from '@/lib/admin-auth'
+import { isValidToken, ADMIN_COOKIE, LEGACY_ADMIN_COOKIE } from '@/lib/admin-auth'
 
 export default async function LoginPage(props: {
   searchParams: Promise<{ error?: string }>
 }) {
   // Already logged in — skip to dashboard
   const cookieStore = await cookies()
-  if (isValidToken(cookieStore.get(ADMIN_COOKIE)?.value)) redirect('/admin')
+  const token = cookieStore.get(ADMIN_COOKIE)?.value ?? cookieStore.get(LEGACY_ADMIN_COOKIE)?.value
+  if (isValidToken(token)) redirect('/admin')
 
   const { error } = await props.searchParams
 
@@ -17,7 +18,7 @@ export default async function LoginPage(props: {
 
         <div className="flex flex-col gap-3">
           <span style={{ color: '#0A84FF', fontSize: '12px', letterSpacing: '0.25em', textTransform: 'uppercase', fontWeight: 700 }}>
-            ARCLO
+            S&Oslash;LV
           </span>
           <h1
             className="text-5xl uppercase leading-none tracking-tight"

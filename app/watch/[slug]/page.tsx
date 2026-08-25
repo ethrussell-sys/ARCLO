@@ -36,7 +36,7 @@ export async function generateMetadata(
       title: film.title,
       description,
       url: pageUrl,
-      siteName: 'ARCLO',
+      siteName: 'Sølv',
       type: 'website',
       ...(image && { images: [{ url: image, alt: film.title }] }),
     },
@@ -125,7 +125,7 @@ export default async function WatchPage(props: {
           textTransform: 'uppercase',
           color: 'rgba(255,255,255,0.25)',
         }}>
-          ARCLO
+          S&Oslash;LV
         </span>
 
         {/* Title */}
@@ -236,7 +236,7 @@ export default async function WatchPage(props: {
         padding: '0 24px 32px',
         margin: 0,
       }}>
-        © 2026 ARCLO
+        © 2026 S&Oslash;LV
       </p>
 
     </main>

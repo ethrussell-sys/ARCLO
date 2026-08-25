@@ -12,7 +12,8 @@ export default function AddToHomeScreen() {
 
   useEffect(() => {
     if (window.matchMedia('(display-mode: standalone)').matches) return
-    if (localStorage.getItem('arclo-a2hs-dismissed')) return
+    // Check both keys so a dismissal from before the rename still sticks.
+    if (localStorage.getItem('solv-a2hs-dismissed') || localStorage.getItem('arclo-a2hs-dismissed')) return
 
     const ua = navigator.userAgent
     const isIOS = /iPad|iPhone|iPod/.test(ua) && !(window as Window & { MSStream?: unknown }).MSStream
@@ -34,7 +35,7 @@ export default function AddToHomeScreen() {
   }, [])
 
   function dismiss() {
-    localStorage.setItem('arclo-a2hs-dismissed', '1')
+    localStorage.setItem('solv-a2hs-dismissed', '1')
     setVisible(false)
   }
 
@@ -53,14 +54,14 @@ export default function AddToHomeScreen() {
       style={{ backgroundColor: '#111', border: '1px solid #222' }}
     >
       <div
-        className="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center font-bold text-lg"
-        style={{ backgroundColor: '#0A84FF', color: 'white', fontFamily: 'serif' }}
+        className="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center font-black text-lg"
+        style={{ backgroundColor: '#000', color: 'white', fontFamily: 'sans-serif', border: '1px solid #222' }}
       >
-        A
+        S
       </div>
 
       <div className="flex-1 flex flex-col gap-1.5">
-        <span className="text-white text-sm font-semibold">Add ARCLO to your home screen</span>
+        <span className="text-white text-sm font-semibold">Add Sølv to your home screen</span>
         {platform === 'ios' ? (
           <span className="text-neutral-500 text-xs leading-relaxed">
             Tap{' '}

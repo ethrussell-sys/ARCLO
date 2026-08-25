@@ -29,7 +29,7 @@ export default function DownloadPage() {
             textTransform: 'uppercase',
             fontFamily: 'var(--font-geist-sans)',
           }}>
-            ARCLO
+            S&Oslash;LV
           </span>
         </div>
 

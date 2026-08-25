@@ -62,7 +62,7 @@ export async function POST(request: Request) {
 
   const byline = director ? `${director}, your` : 'Your'
   const { error: emailError } = await getResend().emails.send({
-    from: 'ARCLO <onboarding@resend.dev>',
+    from: 'Sølv <onboarding@resend.dev>',
     to: contactEmail,
     subject: `We have your film — ${title}`,
     html: `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Film received</title></head>
@@ -70,11 +70,11 @@ export async function POST(request: Request) {
 <table width="100%" cellpadding="0" cellspacing="0"><tbody><tr><td align="center">
 <table width="100%" cellpadding="0" cellspacing="0" style="max-width:480px">
 <tbody>
-<tr><td style="padding-bottom:48px"><span style="color:#0A84FF;font-size:13px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase">ARCLO</span></td></tr>
+<tr><td style="padding-bottom:48px"><span style="color:#0A84FF;font-size:13px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase">S&Oslash;LV</span></td></tr>
 <tr><td style="padding-bottom:12px"><h1 style="color:#fff;font-size:48px;font-weight:900;margin:0;line-height:1;letter-spacing:-1.5px">We have your film.</h1></td></tr>
 <tr><td style="padding-bottom:40px"><p style="color:#a3a3a3;font-size:18px;margin:0;line-height:1.5">${byline} submission of <em style="color:#fff">${title}</em> has been received.</p></td></tr>
 <tr><td style="padding-bottom:40px"><hr style="border:none;border-top:1px solid #1c1c1c;margin:0"></td></tr>
-<tr><td style="padding-bottom:40px"><p style="color:#525252;font-size:14px;margin:0;line-height:1.7">Our team reviews every submission personally. If your film is a fit for ARCLO, we'll be in touch within 24 hours to discuss next steps.</p></td></tr>
+<tr><td style="padding-bottom:40px"><p style="color:#525252;font-size:14px;margin:0;line-height:1.7">Our team reviews every submission personally. If your film is a fit for Sølv, we'll be in touch within 24 hours to discuss next steps.</p></td></tr>
 <tr><td style="padding-bottom:40px"><hr style="border:none;border-top:1px solid #1c1c1c;margin:0"></td></tr>
 <tr><td><p style="color:#404040;font-size:12px;margin:0;line-height:1.7">Questions? Reply to this email.</p></td></tr>
 </tbody></table>

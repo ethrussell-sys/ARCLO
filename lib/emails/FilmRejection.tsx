@@ -19,7 +19,7 @@ export function FilmRejectionEmail({ filmTitle, directorName }: Props) {
 
                     <tr>
                       <td style={{ paddingBottom: '48px' }}>
-                        <span style={wordmark}>ARCLO</span>
+                        <span style={wordmark}>S&Oslash;LV</span>
                       </td>
                     </tr>
 
@@ -34,7 +34,7 @@ export function FilmRejectionEmail({ filmTitle, directorName }: Props) {
                         <p style={sub}>
                           {directorName ? `${directorName}, we` : 'We'} reviewed{' '}
                           <em style={{ color: '#ffffff', fontStyle: 'italic' }}>{filmTitle}</em>{' '}
-                          and it isn&apos;t the right fit for ARCLO at this time.
+                          and it isn&apos;t the right fit for Sølv at this time.
                         </p>
                       </td>
                     </tr>

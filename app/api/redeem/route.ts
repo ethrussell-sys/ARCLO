@@ -14,6 +14,8 @@ export async function POST(request: Request) {
   const normalized = code.trim().toUpperCase()
   const normalizedEmail = email.trim().toLowerCase()
 
+  // Exact match against whatever's stored — works for both legacy ARCLO- codes
+  // and new SOLV- codes, since lookup isn't prefix-restricted.
   const { data: purchase } = await serverClient()
     .from('purchases')
     .select('id, film_id, email, download_count, download_limit')
@@ -33,7 +35,7 @@ export async function POST(request: Request) {
 
   if (count >= limit) {
     return Response.json(
-      { error: "You've reached the maximum number of downloads for this film. Please contact support@arclo.com for assistance." },
+      { error: "You've reached the maximum number of downloads for this film. Please contact support@solvscreen.com for assistance." },
       { status: 403 }
     )
   }

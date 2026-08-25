@@ -93,7 +93,7 @@ export default function PageTracker({ utm, filmId, filmSlug }: Props) {
 
     // ── Page exit ────────────────────────────────────────────────────────────
     function fireExit() {
-      const purchased = sessionStorage.getItem(`arclo_purchased_${filmSlug}`)
+      const purchased = sessionStorage.getItem(`solv_purchased_${filmSlug}`)
       if (purchased) return
       const timeOnPage = Math.round((Date.now() - pageStartAt) / 1000)
       track({

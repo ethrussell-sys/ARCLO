@@ -153,7 +153,7 @@ export default function SubmitPage() {
         {/* Header */}
         <div className="flex flex-col gap-6 mb-16">
           <span style={{ color: '#0A84FF', fontSize: '12px', letterSpacing: '0.25em', textTransform: 'uppercase', fontWeight: 700 }}>
-            ARCLO
+            S&Oslash;LV
           </span>
           <h1
             className="text-6xl uppercase leading-none tracking-tight"

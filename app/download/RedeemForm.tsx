@@ -149,7 +149,7 @@ export default function RedeemForm() {
           type="text"
           value={code}
           onChange={(e) => { setCode(e.target.value); setError('') }}
-          placeholder="ARCLO-XXXX-XXXX"
+          placeholder="SOLV-XXXX-XXXX"
           maxLength={14}
           spellCheck={false}
           autoCapitalize="characters"

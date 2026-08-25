@@ -94,7 +94,7 @@ export default function TermsPage() {
         {/* Sections */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
 
-          {/* 1. About ARCLO */}
+          {/* 1. About Sølv */}
           <div style={section}>
             <p style={sectionLabel}>1</p>
             <h2 style={sectionHeading}>What Sølv Is</h2>

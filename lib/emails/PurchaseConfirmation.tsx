@@ -25,7 +25,7 @@ export function PurchaseConfirmationEmail({ filmTitle, ownerLink, redemptionCode
                     {/* Wordmark */}
                     <tr>
                       <td style={{ paddingBottom: '48px' }}>
-                        <span style={wordmark}>ARCLO</span>
+                        <span style={wordmark}>S&Oslash;LV</span>
                       </td>
                     </tr>
 
@@ -89,7 +89,7 @@ export function PurchaseConfirmationEmail({ filmTitle, ownerLink, redemptionCode
                     <tr>
                       <td>
                         <p style={finePrint}>
-                          Your owner link is permanent — bookmark it and come back any time.{redemptionCode ? ' You can also use the code above at arclo.com/download as a backup.' : ''}
+                          Your owner link is permanent — bookmark it and come back any time.{redemptionCode ? ' You can also use the code above at solvscreen.com/download as a backup.' : ''}
                           <br /><br />
                           Questions? Reply to this email and we&apos;ll sort it out.
                         </p>

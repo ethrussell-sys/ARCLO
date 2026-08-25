@@ -175,7 +175,7 @@ export default async function AdminPage() {
       {/* Header */}
       <header style={{ borderBottom: '1px solid #111', padding: '20px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px' }}>
-          <span style={{ fontFamily: 'var(--font-bebas)', fontSize: '22px', color: '#0A84FF', letterSpacing: '1px' }}>ARCLO</span>
+          <span style={{ fontFamily: 'var(--font-bebas)', fontSize: '22px', color: '#0A84FF', letterSpacing: '1px' }}>S&Oslash;LV</span>
           <span style={{ color: '#404040', fontSize: '13px' }}>Admin</span>
         </div>
         <a

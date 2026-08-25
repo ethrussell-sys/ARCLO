@@ -110,7 +110,7 @@ export default function BuyButton({ filmId, price, title, filmSlug }: Props) {
 
         if (!purchaseRes.ok) {
           setPhase('error')
-          setErrorMsg('Payment succeeded but download failed. Email support@arclo.com.')
+          setErrorMsg('Payment succeeded but download failed. Email support@solvscreen.com.')
           return
         }
 
@@ -120,7 +120,7 @@ export default function BuyButton({ filmId, price, title, filmSlug }: Props) {
         triggerDownload(url, `${title}.mp4`)
 
         if (filmSlug) {
-          sessionStorage.setItem(`arclo_purchased_${filmSlug}`, '1')
+          sessionStorage.setItem(`solv_purchased_${filmSlug}`, '1')
           const visit = getVisitRecord(filmSlug)
           track({
             event_type: 'purchase_completed',
@@ -164,7 +164,7 @@ export default function BuyButton({ filmId, price, title, filmSlug }: Props) {
     if (!res.ok) { setPhase('error'); setErrorMsg('Checkout failed. Please try again.'); return }
     const { url } = await res.json()
     if (url) {
-      if (filmSlug) sessionStorage.setItem('arclo_checkout_slug', filmSlug)
+      if (filmSlug) sessionStorage.setItem('solv_checkout_slug', filmSlug)
       track({ event_type: 'purchase_initiated', film_id: filmId, film_slug: filmSlug })
       window.location.href = url
     }

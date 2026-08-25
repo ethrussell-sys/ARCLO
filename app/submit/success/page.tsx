@@ -58,7 +58,7 @@ export default function SubmitSuccessPage() {
           textDecoration: 'none',
           marginTop: '16px',
         }}>
-          Back to ARCLO
+          Back to S&Oslash;LV
         </Link>
 
       </div>

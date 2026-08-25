@@ -24,7 +24,7 @@ export async function GET(request: Request) {
 
   if (count >= limit) {
     return new Response(
-      'Download limit reached. Contact support@arclo.com for assistance.',
+      'Download limit reached. Contact support@solvscreen.com for assistance.',
       { status: 403 }
     )
   }

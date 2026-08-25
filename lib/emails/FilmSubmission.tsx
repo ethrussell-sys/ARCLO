@@ -23,7 +23,7 @@ export function FilmSubmissionEmail({ filmTitle, directorName }: Props) {
 
                     <tr>
                       <td style={{ paddingBottom: '48px' }}>
-                        <span style={wordmark}>ARCLO</span>
+                        <span style={wordmark}>S&Oslash;LV</span>
                       </td>
                     </tr>
 
@@ -52,7 +52,7 @@ export function FilmSubmissionEmail({ filmTitle, directorName }: Props) {
                     <tr>
                       <td style={{ paddingBottom: '40px' }}>
                         <p style={body2}>
-                          Our team reviews every submission personally. If your film is a fit for ARCLO, we&apos;ll be in touch within 24 hours to discuss next steps.
+                          Our team reviews every submission personally. If your film is a fit for Sølv, we&apos;ll be in touch within 24 hours to discuss next steps.
                         </p>
                       </td>
                     </tr>
