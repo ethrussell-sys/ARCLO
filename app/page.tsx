@@ -59,13 +59,13 @@ export default async function HomePage() {
             One tap.&nbsp;&nbsp;$1.99.&nbsp;&nbsp;Yours forever.
           </p>
 
-          
+          <Link
             href="#films"
             className="explore-link"
             style={{ animation: 'fade-up 0.8s ease-out 0.3s both' }}
           >
             Explore films &rarr;
-          </a>
+          </Link>
         </div>
 
         {/* Film strip */}
