@@ -4,12 +4,13 @@ import { serverClient } from '@/lib/supabase'
 export const dynamic = 'force-dynamic'
 
 async function getLiveFilms() {
-  const { data } = await serverClient()
+  const { data, error } = await serverClient()
     .from('films')
     .select('id, thumbnail_url, title, director')
     .eq('status', 'live')
     .order('created_at', { ascending: false })
     .limit(12)
+  if (error) console.error('[home] failed to load live films:', error)
   return data ?? []
 }
 
@@ -30,7 +31,7 @@ export default async function HomePage() {
         <img
           src="/solv-wordmark_2.png"
           alt="solv"
-          style={{ height: '28px', width: 'auto', display: 'block' }}
+          style={{ height: '28px', width: 'auto', display: 'block', alignSelf: 'flex-start' }}
         />
 
         {/* Headline + subtext + CTA */}
@@ -60,7 +61,7 @@ export default async function HomePage() {
           </p>
 
           <Link
-            href="#films"
+            href={films.length > 0 ? '#films' : '/films'}
             className="explore-link"
             style={{ animation: 'fade-up 0.8s ease-out 0.3s both' }}
           >

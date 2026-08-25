@@ -23,12 +23,26 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: 'ARCLO',
+  metadataBase: process.env.NEXT_PUBLIC_SITE_URL
+    ? new URL(process.env.NEXT_PUBLIC_SITE_URL)
+    : undefined,
+  title: 'Sølv',
   description: 'Own it forever. One tap, $1.99.',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'ARCLO',
+    title: 'Sølv',
+  },
+  openGraph: {
+    title: 'Sølv',
+    description: 'Own the films that matter. One tap. $1.99. Yours forever.',
+    siteName: 'Sølv',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Sølv',
+    description: 'Own the films that matter. One tap. $1.99. Yours forever.',
   },
 }
 

@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'ARCLO',
-    short_name: 'ARCLO',
+    name: 'Sølv',
+    short_name: 'Sølv',
     description: 'Own the films that matter.',
     start_url: '/',
     display: 'standalone',

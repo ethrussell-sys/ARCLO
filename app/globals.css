@@ -97,4 +97,5 @@ body {
   height: 28px;
   width: auto;
   display: block;
+  align-self: flex-start;
 }
