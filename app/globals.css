@@ -92,3 +92,9 @@ body {
 .explore-link:hover {
   opacity: 1;
 }
+/* Wordmark logo (top-left) */
+.hero-section > img {
+  height: 28px;
+  width: auto;
+  display: block;
+}
