@@ -19,7 +19,7 @@ export default async function HomePage() {
   return (
     <main style={{ backgroundColor: '#000', color: '#fff', paddingLeft: '48px', paddingRight: '48px' }}>
 
-      {/* ── Hero ── */}
+      {/* Hero */}
       <section className="hero-section" style={{
         display: 'flex',
         flexDirection: 'column',
@@ -29,11 +29,11 @@ export default async function HomePage() {
         {/* Wordmark */}
         <img
           src="/solv-wordmark_2.png"
-          alt="sølv"
+          alt="solv"
           style={{ height: '28px', width: 'auto', display: 'block' }}
         />
 
-        {/* Headline + subtext + CTA — vertically centered */}
+        {/* Headline + subtext + CTA */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <h1
             style={{
@@ -54,16 +54,17 @@ export default async function HomePage() {
             fontSize: '15px',
             lineHeight: 1.6,
             margin: '0 0 32px',
-            animation: 'fade-up 0.8s ease-out 0.15s both', 
+            animation: 'fade-up 0.8s ease-out 0.15s both',
           }}>
             One tap.&nbsp;&nbsp;$1.99.&nbsp;&nbsp;Yours forever.
           </p>
+
           
             href="#films"
             className="explore-link"
             style={{ animation: 'fade-up 0.8s ease-out 0.3s both' }}
           >
-            Explore films →
+            Explore films &rarr;
           </a>
         </div>
 
@@ -151,10 +152,10 @@ export default async function HomePage() {
 
       </section>
 
-      {/* ── Footer ── */}
+      {/* Footer */}
       <footer style={{ padding: '48px 24px', borderTop: '1px solid #111' }}>
         <span style={{ fontFamily: 'var(--font-bebas)', fontSize: '28px', textTransform: 'uppercase', letterSpacing: '-0.5px' }}>
-          SØLV
+          S&Oslash;LV
         </span>
         <p style={{ color: '#404040', fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', margin: '8px 0 0' }}>
           The films that matter.
