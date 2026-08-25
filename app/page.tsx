@@ -54,11 +54,10 @@ export default async function HomePage() {
             fontSize: '15px',
             lineHeight: 1.6,
             margin: '0 0 32px',
-            animation: 'fade-up 0.8s ease-out 0.15s both',
+            animation: 'fade-up 0.8s ease-out 0.15s both', 
           }}>
             One tap.&nbsp;&nbsp;$1.99.&nbsp;&nbsp;Yours forever.
           </p>
-
           
             href="#films"
             className="explore-link"
