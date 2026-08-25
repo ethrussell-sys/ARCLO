@@ -18,15 +18,14 @@ export default function AppleIcon() {
     >
       <div
         style={{
-          color: '#0A84FF',
+          color: '#ffffff',
           fontSize: 108,
           fontWeight: 900,
-          fontFamily: 'serif',
+          fontFamily: 'sans-serif',
           lineHeight: 1,
-          letterSpacing: '-4px',
         }}
       >
-        A
+        S
       </div>
     </div>,
     { ...size }

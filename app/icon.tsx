@@ -17,15 +17,14 @@ export default function Icon() {
     >
       <div
         style={{
-          color: '#0A84FF',
+          color: '#ffffff',
           fontSize: 300,
           fontWeight: 900,
-          fontFamily: 'serif',
+          fontFamily: 'sans-serif',
           lineHeight: 1,
-          letterSpacing: '-12px',
         }}
       >
-        A
+        S
       </div>
     </div>,
     { ...size }
