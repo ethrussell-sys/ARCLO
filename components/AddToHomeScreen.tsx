@@ -53,12 +53,11 @@ export default function AddToHomeScreen() {
       className="fixed bottom-28 left-4 right-4 z-40 rounded-2xl p-4 flex items-start gap-3"
       style={{ backgroundColor: '#111', border: '1px solid #222' }}
     >
-      <div
-        className="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center font-black text-lg"
-        style={{ backgroundColor: '#000', color: 'white', fontFamily: 'sans-serif', border: '1px solid #222' }}
-      >
-        S
-      </div>
+      <img
+        src="/solv-app-icon.png"
+        alt="Sølv"
+        className="w-10 h-10 rounded-xl flex-shrink-0"
+      />
 
       <div className="flex-1 flex flex-col gap-1.5">
         <span className="text-white text-sm font-semibold">Add Sølv to your home screen</span>
