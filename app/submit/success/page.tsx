@@ -1,11 +1,12 @@
 import Link from 'next/link'
+import { tokens } from '@/lib/tokens'
 
 export default function SubmitSuccessPage() {
   return (
     <main style={{
       minHeight: '100vh',
-      backgroundColor: '#000',
-      color: '#fff',
+      backgroundColor: tokens.color.bg,
+      color: tokens.color.ink,
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -19,7 +20,7 @@ export default function SubmitSuccessPage() {
           width: '56px',
           height: '56px',
           borderRadius: '50%',
-          backgroundColor: '#0A84FF',
+          backgroundColor: tokens.color.blue,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -31,7 +32,7 @@ export default function SubmitSuccessPage() {
         </div>
 
         <h1 style={{
-          fontFamily: 'var(--font-bebas)',
+          fontFamily: tokens.font.display,
           fontSize: 'clamp(2.8rem, 10vw, 4rem)',
           lineHeight: 1,
           textTransform: 'uppercase',
@@ -42,7 +43,7 @@ export default function SubmitSuccessPage() {
         </h1>
 
         <p style={{
-          color: 'rgba(255,255,255,0.45)',
+          color: tokens.color.muted2,
           fontSize: '15px',
           lineHeight: 1.6,
           margin: 0,
@@ -51,14 +52,14 @@ export default function SubmitSuccessPage() {
         </p>
 
         <Link href="/" style={{
-          color: 'rgba(255,255,255,0.25)',
+          color: tokens.color.muted2,
           fontSize: '11px',
           letterSpacing: '0.2em',
           textTransform: 'uppercase',
           textDecoration: 'none',
           marginTop: '16px',
         }}>
-          Back to S&Oslash;LV
+          Back to SØLV
         </Link>
 
       </div>
