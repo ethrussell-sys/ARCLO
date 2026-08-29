@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { serverClient } from '@/lib/supabase'
 import BuyButton from './BuyButton'
 import ShareButton from '@/app/watch/[slug]/ShareButton'
+import { tokens } from '@/lib/tokens'
 
 export async function generateMetadata(
   props: { params: Promise<{ id: string }> }
@@ -74,10 +75,10 @@ export default async function FilmPage(props: {
   const slug = (film.slug as string | null) ?? null
 
   return (
-    <main style={{ minHeight: '100vh', backgroundColor: '#000', color: '#fff', display: 'flex', flexDirection: 'column', paddingBottom: '180px' }}>
+    <main style={{ minHeight: '100vh', backgroundColor: tokens.color.bg, color: tokens.color.ink, display: 'flex', flexDirection: 'column', paddingBottom: '180px' }}>
 
       {/* ── Hero ── */}
-      <div className="film-hero" style={{ position: 'relative', width: '100%', backgroundColor: '#0a0a0a', flexShrink: 0 }}>
+      <div className="film-hero" style={{ position: 'relative', width: '100%', backgroundColor: tokens.color.surface, flexShrink: 0 }}>
 
         {film.thumbnail_url && (
           <img
@@ -97,19 +98,19 @@ export default async function FilmPage(props: {
         {/* Title + meta */}
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, paddingTop: 0, paddingBottom: '8px', paddingLeft: '32px', paddingRight: '32px' }}>
           <h1 style={{
-            fontFamily: 'var(--font-bebas)',
+            fontFamily: tokens.font.display,
             fontSize: 'clamp(3rem, 8vw, 6rem)',
             lineHeight: 1,
             textTransform: 'uppercase',
             margin: 0,
             letterSpacing: '-0.5px',
-            color: '#fff',
+            color: tokens.color.ink,
           }}>
             {film.title}
           </h1>
           {(film.director || film.year || film.price) && (
             <p style={{
-              color: 'rgba(255,255,255,0.5)',
+              color: tokens.color.muted,
               fontSize: '11px',
               letterSpacing: '0.2em',
               textTransform: 'uppercase',
@@ -126,7 +127,7 @@ export default async function FilmPage(props: {
 
         {film.description && (
           <p style={{
-            color: '#fff',
+            color: tokens.color.ink,
             opacity: 0.85,
             fontSize: '17px',
             lineHeight: 1.7,
@@ -142,7 +143,7 @@ export default async function FilmPage(props: {
 
         {embedUrl && (
           <div style={{ marginLeft: '32px', marginRight: '32px' }}>
-            <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%', borderRadius: '12px', overflow: 'hidden', backgroundColor: '#0a0a0a' }}>
+            <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%', borderRadius: '12px', overflow: 'hidden', backgroundColor: tokens.color.surface }}>
               <iframe
                 src={embedUrl}
                 title={`${film.title} — trailer`}
@@ -156,7 +157,7 @@ export default async function FilmPage(props: {
 
         {directVideoUrl && (
           <div style={{ marginLeft: '32px', marginRight: '32px' }}>
-            <div style={{ borderRadius: '12px', overflow: 'hidden', backgroundColor: '#0a0a0a' }}>
+            <div style={{ borderRadius: '12px', overflow: 'hidden', backgroundColor: tokens.color.surface }}>
               {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
               <video
                 src={directVideoUrl}
@@ -185,7 +186,7 @@ export default async function FilmPage(props: {
         left: 0,
         right: 0,
         padding: '24px 24px 32px',
-        background: 'linear-gradient(to top, #000 60%, transparent)',
+        background: `linear-gradient(to top, ${tokens.color.bg} 60%, transparent)`,
         pointerEvents: 'none',
       }}>
         <div style={{ pointerEvents: 'auto' }}>
