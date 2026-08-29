@@ -6,17 +6,19 @@ type FilmCardProps = {
   title: string
   director?: string | null
   thumbnailUrl?: string | null
+  width?: number | string
+  height?: number | string
 }
 
-export function FilmCard({ href, title, director, thumbnailUrl }: FilmCardProps) {
+export function FilmCard({ href, title, director, thumbnailUrl, width = 200, height = 280 }: FilmCardProps) {
   return (
     <Link
       href={href}
       className="film-card"
       style={{
         flexShrink: 0,
-        width: 200,
-        height: 280,
+        width,
+        height,
         borderRadius: tokens.radius.sm,
         backgroundColor: tokens.color.surface2,
         display: 'block',
