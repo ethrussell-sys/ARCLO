@@ -8,6 +8,8 @@ import AgeGate from './AgeGate'
 import ShareButton from './ShareButton'
 import TrailerPlayer from './TrailerPlayer'
 import PageTracker from './PageTracker'
+import { Wordmark } from '@/components/Wordmark'
+import { tokens } from '@/lib/tokens'
 
 export async function generateMetadata(
   props: { params: Promise<{ slug: string }> }
@@ -99,8 +101,8 @@ export default async function WatchPage(props: {
     <PageTracker utm={utm} filmId={film.id} filmSlug={slug} />
     {film.rating === 'R' && <AgeGate slug={slug} />}
     <main style={{
-      backgroundColor: '#000',
-      color: '#fff',
+      backgroundColor: tokens.color.bg,
+      color: tokens.color.ink,
       minHeight: '100vh',
       display: 'flex',
       flexDirection: 'column',
@@ -117,20 +119,11 @@ export default async function WatchPage(props: {
         gap: '20px',
       }}>
 
-        {/* Wordmark */}
-        <span style={{
-          fontFamily: 'var(--font-bebas)',
-          fontSize: '13px',
-          letterSpacing: '0.3em',
-          textTransform: 'uppercase',
-          color: 'rgba(255,255,255,0.25)',
-        }}>
-          S&Oslash;LV
-        </span>
+        <Wordmark />
 
         {/* Title */}
         <h1 style={{
-          fontFamily: 'var(--font-bebas)',
+          fontFamily: tokens.font.display,
           fontSize: 'clamp(2.8rem, 12vw, 4.5rem)',
           lineHeight: 1,
           textTransform: 'uppercase',
@@ -144,7 +137,7 @@ export default async function WatchPage(props: {
         {/* Metadata */}
         {meta && (
           <p style={{
-            color: 'rgba(255,255,255,0.4)',
+            color: tokens.color.muted2,
             fontSize: '11px',
             letterSpacing: '0.2em',
             textTransform: 'uppercase',
@@ -185,7 +178,7 @@ export default async function WatchPage(props: {
           <p
             data-track="synopsis"
             style={{
-              color: 'rgba(255,255,255,0.55)',
+              color: tokens.color.muted,
               fontSize: '15px',
               textAlign: 'center',
               lineHeight: 1.6,
@@ -211,7 +204,7 @@ export default async function WatchPage(props: {
 
           {note && (
             <div style={{
-              color: 'rgba(255,255,255,0.45)',
+              color: tokens.color.muted2,
               fontSize: '14px',
               fontStyle: 'italic',
               textAlign: 'center',
@@ -229,14 +222,14 @@ export default async function WatchPage(props: {
       </div>
 
       <p style={{
-        color: 'rgba(255,255,255,0.15)',
+        color: tokens.color.line2,
         fontSize: '11px',
         letterSpacing: '0.05em',
         textAlign: 'center',
         padding: '0 24px 32px',
         margin: 0,
       }}>
-        © 2026 S&Oslash;LV
+        © 2026 SØLV
       </p>
 
     </main>
