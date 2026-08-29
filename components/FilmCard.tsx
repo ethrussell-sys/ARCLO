@@ -17,13 +17,13 @@ export function FilmCard({ href, title, director, thumbnailUrl }: FilmCardProps)
         flexShrink: 0,
         width: 200,
         height: 280,
-        borderRadius: tokens.radius.md,
+        borderRadius: tokens.radius.sm,
         backgroundColor: tokens.color.surface2,
         display: 'block',
         position: 'relative',
       }}
     >
-      <div style={{ position: 'absolute', inset: 0, borderRadius: tokens.radius.md, overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', inset: 0, borderRadius: tokens.radius.sm, overflow: 'hidden' }}>
         {thumbnailUrl && (
           <img
             src={thumbnailUrl}
@@ -39,7 +39,7 @@ export function FilmCard({ href, title, director, thumbnailUrl }: FilmCardProps)
           left: 0,
           right: 0,
           height: '40%',
-          borderRadius: `0 0 ${tokens.radius.md}px ${tokens.radius.md}px`,
+          borderRadius: `0 0 ${tokens.radius.sm}px ${tokens.radius.sm}px`,
           background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)',
           zIndex: 2,
         }}

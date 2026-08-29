@@ -1,5 +1,8 @@
 import Link from 'next/link'
 import { serverClient } from '@/lib/supabase'
+import { FilmCard } from '@/components/FilmCard'
+import { Wordmark } from '@/components/Wordmark'
+import { tokens } from '@/lib/tokens'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,7 +21,7 @@ export default async function HomePage() {
   const films = await getLiveFilms()
 
   return (
-    <main style={{ backgroundColor: '#000', color: '#fff', paddingLeft: '48px', paddingRight: '48px' }}>
+    <main style={{ backgroundColor: tokens.color.bg, color: tokens.color.ink, paddingLeft: '48px', paddingRight: '48px' }}>
 
       {/* Hero */}
       <section className="hero-section" style={{
@@ -51,7 +54,7 @@ export default async function HomePage() {
           </h1>
 
           <p style={{
-            color: '#737373',
+            color: tokens.color.muted2,
             fontSize: '15px',
             lineHeight: 1.6,
             margin: '0 0 32px',
@@ -72,7 +75,7 @@ export default async function HomePage() {
         {/* Film strip */}
         {films.length > 0 && (
           <>
-            <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', margin: '0' }} />
+            <div style={{ borderTop: `1px solid ${tokens.color.line}`, margin: '0' }} />
             <div
               id="films"
               className="film-strip hero-strip"
@@ -85,67 +88,13 @@ export default async function HomePage() {
               }}
             >
               {films.map((film) => (
-                <Link
+                <FilmCard
                   key={film.id}
                   href={`/films/${film.id}`}
-                  className="film-card"
-                  style={{
-                    flexShrink: 0,
-                    width: '200px',
-                    height: '280px',
-                    borderRadius: '8px',
-                    backgroundColor: '#111',
-                    display: 'block',
-                    position: 'relative',
-                  }}
-                >
-                  <div style={{ position: 'absolute', inset: 0, borderRadius: '8px', overflow: 'hidden' }}>
-                    {film.thumbnail_url && (
-                      <img
-                        src={film.thumbnail_url}
-                        alt={film.title}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                      />
-                    )}
-                  </div>
-                  <div style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    height: '40%',
-                    borderRadius: '0 0 8px 8px',
-                    background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)',
-                    zIndex: 2,
-                  }}>
-                    <div style={{ position: 'absolute', bottom: '12px', left: '12px', right: '12px' }}>
-                      <span style={{
-                        fontFamily: 'var(--font-bebas)',
-                        fontSize: '14px',
-                        color: '#fff',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.1em',
-                        lineHeight: 1,
-                        display: 'block',
-                      }}>
-                        {film.title}
-                      </span>
-                      {film.director && (
-                        <span style={{
-                          fontSize: '10px',
-                          color: 'rgba(255,255,255,0.5)',
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.15em',
-                          lineHeight: 1,
-                          display: 'block',
-                          marginTop: '4px',
-                        }}>
-                          {film.director}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </Link>
+                  title={film.title}
+                  director={film.director}
+                  thumbnailUrl={film.thumbnail_url}
+                />
               ))}
             </div>
           </>
@@ -154,17 +103,15 @@ export default async function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer style={{ padding: '48px 24px', borderTop: '1px solid #111' }}>
-        <span style={{ fontFamily: 'var(--font-bebas)', fontSize: '28px', textTransform: 'uppercase', letterSpacing: '-0.5px' }}>
-          S&Oslash;LV
-        </span>
-        <p style={{ color: '#404040', fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', margin: '8px 0 0' }}>
+      <footer style={{ padding: '48px 24px', borderTop: `1px solid ${tokens.color.surface2}` }}>
+        <Wordmark size={28} tracking="-0.5px" color={tokens.color.ink} />
+        <p style={{ color: tokens.color.line2, fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', margin: '8px 0 0' }}>
           The films that matter.
         </p>
         <div style={{ marginTop: '24px', display: 'flex', gap: '20px' }}>
           <Link
             href="/terms"
-            style={{ color: '#2a2a2a', fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', textDecoration: 'none' }}
+            style={{ color: tokens.color.line2, fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', textDecoration: 'none' }}
           >
             Terms of Service
           </Link>
