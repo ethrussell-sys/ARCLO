@@ -1,4 +1,5 @@
 import { ImageResponse } from 'next/og'
+import { tokens } from '@/lib/tokens'
 
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
@@ -8,7 +9,7 @@ export default function OpengraphImage() {
     (
       <div
         style={{
-          background: '#000000',
+          background: tokens.color.bg,
           width: '100%',
           height: '100%',
           display: 'flex',
@@ -19,7 +20,7 @@ export default function OpengraphImage() {
       >
         <div
           style={{
-            color: '#ffffff',
+            color: tokens.color.ink,
             fontSize: 160,
             fontWeight: 900,
             fontFamily: 'sans-serif',
@@ -27,12 +28,12 @@ export default function OpengraphImage() {
             lineHeight: 1,
           }}
         >
-          S&#216;LV
+          SØLV
         </div>
         <div
           style={{
             marginTop: 28,
-            color: 'rgba(255,255,255,0.5)',
+            color: tokens.color.muted,
             fontSize: 28,
             fontFamily: 'sans-serif',
             letterSpacing: '0.3em',
