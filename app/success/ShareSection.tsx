@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { tokens } from '@/lib/tokens'
 
 export default function ShareSection({ watchUrl }: { watchUrl: string }) {
   const [name, setName] = useState('')
@@ -35,7 +36,7 @@ export default function ShareSection({ watchUrl }: { watchUrl: string }) {
       display: 'flex',
       flexDirection: 'column',
       gap: '10px',
-      borderTop: '1px solid #1a1a1a',
+      borderTop: `1px solid ${tokens.color.line}`,
       paddingTop: '24px',
     }}>
       <input
@@ -45,15 +46,15 @@ export default function ShareSection({ watchUrl }: { watchUrl: string }) {
         placeholder="Your name"
         style={{
           width: '100%',
-          background: '#0d0d0d',
-          border: '1px solid #222',
+          background: tokens.color.surface,
+          border: `1px solid ${tokens.color.line}`,
           borderRadius: '12px',
-          color: '#fff',
+          color: tokens.color.ink,
           fontSize: '14px',
           lineHeight: 1.5,
           padding: '12px 14px',
           outline: 'none',
-          fontFamily: 'var(--font-geist-sans)',
+          fontFamily: tokens.font.body,
           boxSizing: 'border-box',
         }}
       />
@@ -66,16 +67,16 @@ export default function ShareSection({ watchUrl }: { watchUrl: string }) {
           rows={2}
           style={{
             width: '100%',
-            background: '#0d0d0d',
-            border: '1px solid #222',
+            background: tokens.color.surface,
+            border: `1px solid ${tokens.color.line}`,
             borderRadius: '12px',
-            color: '#fff',
+            color: tokens.color.ink,
             fontSize: '14px',
             lineHeight: 1.5,
             padding: '12px 14px 28px',
             resize: 'none',
             outline: 'none',
-            fontFamily: 'var(--font-geist-sans)',
+            fontFamily: tokens.font.body,
             boxSizing: 'border-box',
           }}
         />
@@ -84,7 +85,7 @@ export default function ShareSection({ watchUrl }: { watchUrl: string }) {
           bottom: '10px',
           right: '12px',
           fontSize: '11px',
-          color: note.length >= maxNote ? 'rgba(255,80,80,0.7)' : 'rgba(255,255,255,0.2)',
+          color: note.length >= maxNote ? 'rgba(255,80,80,0.7)' : tokens.color.muted2,
           pointerEvents: 'none',
         }}>
           {note.length}/{maxNote}
@@ -97,9 +98,9 @@ export default function ShareSection({ watchUrl }: { watchUrl: string }) {
           width: '100%',
           padding: '14px',
           borderRadius: '12px',
-          border: '1px solid #333',
+          border: `1px solid ${tokens.color.line2}`,
           background: 'transparent',
-          color: '#fff',
+          color: tokens.color.ink,
           fontSize: '14px',
           letterSpacing: '0.06em',
           cursor: 'pointer',

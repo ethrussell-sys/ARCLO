@@ -222,7 +222,7 @@ export default async function WatchPage(props: {
       </div>
 
       <p style={{
-        color: tokens.color.line2,
+        color: tokens.color.muted2,
         fontSize: '11px',
         letterSpacing: '0.05em',
         textAlign: 'center',

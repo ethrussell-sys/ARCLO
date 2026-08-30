@@ -215,7 +215,7 @@ export default function SubmitPage() {
               }}
               placeholder="—"
             />
-            <div className="text-right" style={{ color: descLen > DESC_MAX - 20 ? tokens.color.blue : tokens.color.line2, fontSize: '11px', marginTop: '4px' }}>
+            <div className="text-right" style={{ color: descLen > DESC_MAX - 20 ? tokens.color.blue : tokens.color.muted2, fontSize: '11px', marginTop: '4px' }}>
               {descLen}/{DESC_MAX}
             </div>
           </div>
@@ -269,7 +269,7 @@ export default function SubmitPage() {
                 </button>
               ))}
             </div>
-            <p style={{ color: tokens.color.line2, fontSize: '11px', marginTop: '10px', marginBottom: 0, lineHeight: 1.5 }}>
+            <p style={{ color: tokens.color.muted2, fontSize: '11px', marginTop: '10px', marginBottom: 0, lineHeight: 1.5 }}>
               Self-declared by the filmmaker based on MPA content guidelines.
             </p>
           </div>
@@ -292,7 +292,7 @@ export default function SubmitPage() {
                 ...inputStyle,
                 textAlign: 'left',
                 cursor: 'pointer',
-                color: fileName ? tokens.color.ink : tokens.color.line2,
+                color: fileName ? tokens.color.ink : tokens.color.muted2,
                 paddingLeft: 0,
               }}
             >

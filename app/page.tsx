@@ -105,13 +105,13 @@ export default async function HomePage() {
       {/* Footer */}
       <footer style={{ padding: '48px 24px', borderTop: `1px solid ${tokens.color.surface2}` }}>
         <Wordmark size={28} tracking="-0.5px" color={tokens.color.ink} />
-        <p style={{ color: tokens.color.line2, fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', margin: '8px 0 0' }}>
+        <p style={{ color: tokens.color.muted2, fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', margin: '8px 0 0' }}>
           The films that matter.
         </p>
         <div style={{ marginTop: '24px', display: 'flex', gap: '20px' }}>
           <Link
             href="/terms"
-            style={{ color: tokens.color.line2, fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', textDecoration: 'none' }}
+            style={{ color: tokens.color.muted2, fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', textDecoration: 'none' }}
           >
             Terms of Service
           </Link>

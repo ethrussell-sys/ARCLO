@@ -78,7 +78,7 @@ export default function TermsPage() {
           >
             Terms of Service
           </h1>
-          <p style={{ color: tokens.color.line2, fontSize: '12px', margin: 0 }}>
+          <p style={{ color: tokens.color.muted2, fontSize: '12px', margin: 0 }}>
             Effective {EFFECTIVE_DATE}
           </p>
         </div>
@@ -275,7 +275,7 @@ export default function TermsPage() {
         <div style={{ marginTop: '80px', paddingTop: '32px', borderTop: `1px solid ${tokens.color.surface2}`, display: 'flex', gap: '24px' }}>
           <Link
             href="/"
-            style={{ color: tokens.color.line2, fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase', textDecoration: 'none' }}
+            style={{ color: tokens.color.muted2, fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase', textDecoration: 'none' }}
           >
             ← Back to films
           </Link>

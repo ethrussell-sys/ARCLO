@@ -117,7 +117,7 @@ export default async function SuccessPage(props: {
 
         <DownloadButton url={downloadUrl} title={film.title} />
 
-        <p style={{ color: tokens.color.line2, fontSize: '12px', margin: 0 }}>
+        <p style={{ color: tokens.color.muted2, fontSize: '12px', margin: 0 }}>
           Link expires in 24 hours. Check your email for a permanent copy.
         </p>
 
