@@ -6,6 +6,7 @@ import type { Stripe, PaymentRequest } from '@stripe/stripe-js'
 import { readUtm } from '@/lib/utm'
 import { track } from '@/lib/track'
 import { getVisitRecord } from '@/lib/session'
+import { tokens } from '@/lib/tokens'
 
 type Props = { filmId: string; price: number; title: string; filmSlug?: string }
 
@@ -177,7 +178,7 @@ export default function BuyButton({ filmId, price, title, filmSlug }: Props) {
         <div className="flex flex-col items-center gap-8">
           <div
             className="w-20 h-20 rounded-full flex items-center justify-center animate-pop-in"
-            style={{ backgroundColor: '#0A84FF' }}
+            style={{ backgroundColor: tokens.color.blue }}
           >
             <svg
               width="36"
@@ -196,7 +197,7 @@ export default function BuyButton({ filmId, price, title, filmSlug }: Props) {
           <div className="flex flex-col gap-2">
             <h2
               className="text-6xl uppercase tracking-tight"
-              style={{ fontFamily: 'var(--font-bebas)' }}
+              style={{ fontFamily: tokens.font.display }}
             >
               You own it.
             </h2>
@@ -207,7 +208,7 @@ export default function BuyButton({ filmId, price, title, filmSlug }: Props) {
             <button
               onClick={() => triggerDownload(downloadUrl, `${title}.mp4`)}
               className="w-full max-w-xs py-4 rounded-2xl text-white font-semibold text-base tracking-wide active:scale-95 transition-transform"
-              style={{ backgroundColor: '#0A84FF' }}
+              style={{ backgroundColor: tokens.color.blue }}
             >
               Download to device
             </button>
@@ -227,7 +228,7 @@ export default function BuyButton({ filmId, price, title, filmSlug }: Props) {
         <button
           onClick={() => setPhase('card')}
           className="w-full py-4 rounded-2xl text-white text-lg font-semibold"
-          style={{ backgroundColor: '#0A84FF' }}
+          style={{ backgroundColor: tokens.color.blue }}
         >
           Try again
         </button>
@@ -248,7 +249,7 @@ export default function BuyButton({ filmId, price, title, filmSlug }: Props) {
         onMouseEnter={() => track({ event_type: 'buy_button_hover', film_id: filmId, film_slug: filmSlug })}
         disabled={isProcessing || phase === 'checking'}
         className="w-full py-[18px] rounded-2xl font-semibold tracking-wide active:scale-95 transition-transform flex items-center justify-center gap-2 disabled:opacity-40"
-        style={{ backgroundColor: '#000', border: '1.5px solid #333' }}
+        style={{ backgroundColor: tokens.color.bg, border: `1.5px solid ${tokens.color.line2}` }}
         aria-label={`Buy ${title} with Apple Pay`}
       >
         {isProcessing ? (
@@ -272,7 +273,7 @@ export default function BuyButton({ filmId, price, title, filmSlug }: Props) {
       onMouseEnter={() => track({ event_type: 'buy_button_hover', film_id: filmId, film_slug: filmSlug })}
       disabled={isProcessing}
       className="w-full py-4 rounded-2xl text-white text-lg font-semibold tracking-wide active:scale-95 transition-transform disabled:opacity-60"
-      style={{ backgroundColor: '#0A84FF' }}
+      style={{ backgroundColor: tokens.color.blue }}
       aria-label={`Buy ${title} for $${price.toFixed(2)}`}
     >
       {isProcessing ? 'Processing…' : `Own it — $${price.toFixed(2)}`}

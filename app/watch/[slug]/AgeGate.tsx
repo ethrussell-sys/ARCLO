@@ -1,6 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { Wordmark } from '@/components/Wordmark'
+import { tokens } from '@/lib/tokens'
 
 export default function AgeGate({ slug }: { slug: string }) {
   const [visible, setVisible] = useState(false)
@@ -21,7 +24,7 @@ export default function AgeGate({ slug }: { slug: string }) {
     <div style={{
       position: 'fixed',
       inset: 0,
-      backgroundColor: '#000',
+      backgroundColor: tokens.color.bg,
       zIndex: 100,
       display: 'flex',
       flexDirection: 'column',
@@ -31,17 +34,13 @@ export default function AgeGate({ slug }: { slug: string }) {
     }}>
 
       {/* Wordmark */}
-      <span style={{
-        position: 'absolute',
-        top: '40px',
-        color: '#525252',
-        fontSize: '12px',
-        letterSpacing: '0.3em',
-        textTransform: 'uppercase',
-        fontFamily: 'var(--font-geist-sans)',
-      }}>
-        S&Oslash;LV
-      </span>
+      <Wordmark
+        size={12}
+        tracking="0.3em"
+        color={tokens.color.muted2}
+        fontFamily={tokens.font.body}
+        style={{ position: 'absolute', top: '40px' }}
+      />
 
       <div style={{
         width: '100%',
@@ -53,7 +52,7 @@ export default function AgeGate({ slug }: { slug: string }) {
         textAlign: 'center',
       }}>
         <p style={{
-          color: 'rgba(255,255,255,0.7)',
+          color: tokens.color.silver,
           fontSize: '15px',
           lineHeight: 1.7,
           margin: 0,
@@ -68,8 +67,8 @@ export default function AgeGate({ slug }: { slug: string }) {
             padding: '18px',
             borderRadius: '14px',
             border: 'none',
-            backgroundColor: '#0A84FF',
-            color: '#fff',
+            backgroundColor: tokens.color.blue,
+            color: tokens.color.ink,
             fontSize: '16px',
             fontWeight: 600,
             letterSpacing: '0.02em',
@@ -79,10 +78,10 @@ export default function AgeGate({ slug }: { slug: string }) {
           I am 18 or older
         </button>
 
-        <a
+        <Link
           href="/"
           style={{
-            color: 'rgba(255,255,255,0.25)',
+            color: tokens.color.muted2,
             fontSize: '13px',
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
@@ -90,7 +89,7 @@ export default function AgeGate({ slug }: { slug: string }) {
           }}
         >
           Go back
-        </a>
+        </Link>
       </div>
     </div>
   )

@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react'
 import { track } from '@/lib/track'
+import { tokens } from '@/lib/tokens'
 
 const MAX_NOTE = 120
 
@@ -83,7 +84,7 @@ export default function ShareButton({
           background: 'none',
           border: 'none',
           cursor: 'pointer',
-          color: open || copied ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.4)',
+          color: open || copied ? tokens.color.muted : tokens.color.muted2,
           fontSize: '12px',
           letterSpacing: '0.12em',
           textTransform: 'uppercase',
@@ -117,14 +118,14 @@ export default function ShareButton({
           style={{
             width: '100%',
             height: '46px',
-            background: '#0d0d0d',
-            border: '1px solid #222',
+            background: tokens.color.surface,
+            border: `1px solid ${tokens.color.line}`,
             borderRadius: '12px',
-            color: '#fff',
+            color: tokens.color.ink,
             fontSize: '14px',
             padding: '0 14px',
             outline: 'none',
-            fontFamily: 'var(--font-geist-sans)',
+            fontFamily: tokens.font.body,
             boxSizing: 'border-box',
           }}
         />
