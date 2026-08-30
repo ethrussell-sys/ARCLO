@@ -1,20 +1,21 @@
 'use client'
 
 import { useState } from 'react'
+import { tokens } from '@/lib/tokens'
 
 type Result = { downloadUrl: string; filmTitle: string; downloadsRemaining: number }
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  background: '#0d0d0d',
-  border: '1px solid #222',
+  background: tokens.color.surface,
+  border: `1px solid ${tokens.color.line}`,
   borderRadius: '12px',
-  color: '#fff',
+  color: tokens.color.ink,
   fontSize: '16px',
   padding: '16px 20px',
   outline: 'none',
   boxSizing: 'border-box',
-  fontFamily: 'var(--font-geist-sans)',
+  fontFamily: tokens.font.body,
 }
 
 const codeInputStyle: React.CSSProperties = {
@@ -33,7 +34,7 @@ const errorStyle: React.CSSProperties = {
 }
 
 const mutedStyle: React.CSSProperties = {
-  color: 'rgba(255,255,255,0.25)',
+  color: tokens.color.muted2,
   fontSize: '12px',
   margin: 0,
   textAlign: 'center',
@@ -103,7 +104,7 @@ export default function RedeemForm() {
   if (result) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', textAlign: 'center' }}>
-        <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px', letterSpacing: '0.1em', textTransform: 'uppercase', margin: 0 }}>
+        <p style={{ color: tokens.color.muted, fontSize: '13px', letterSpacing: '0.1em', textTransform: 'uppercase', margin: 0 }}>
           {result.filmTitle}
         </p>
         <a
@@ -113,8 +114,8 @@ export default function RedeemForm() {
             width: '100%',
             padding: '18px',
             borderRadius: '14px',
-            backgroundColor: '#0A84FF',
-            color: '#fff',
+            backgroundColor: tokens.color.blue,
+            color: tokens.color.ink,
             fontSize: '16px',
             fontWeight: 600,
             textDecoration: 'none',
@@ -133,7 +134,7 @@ export default function RedeemForm() {
         </p>
         <button
           onClick={() => { setResult(null); setCode(''); setEmail('') }}
-          style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.3)', fontSize: '12px', cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase' }}
+          style={{ background: 'none', border: 'none', color: tokens.color.muted2, fontSize: '12px', cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase' }}
         >
           Enter another code
         </button>
@@ -174,9 +175,9 @@ export default function RedeemForm() {
             width: '100%',
             padding: '18px',
             borderRadius: '14px',
-            border: '1px solid #333',
+            border: `1px solid ${tokens.color.line2}`,
             background: 'transparent',
-            color: loading || !code.trim() || !email.trim() ? 'rgba(255,255,255,0.3)' : '#fff',
+            color: loading || !code.trim() || !email.trim() ? tokens.color.muted2 : tokens.color.ink,
             fontSize: '15px',
             letterSpacing: '0.06em',
             cursor: loading || !code.trim() || !email.trim() ? 'default' : 'pointer',
@@ -189,10 +190,10 @@ export default function RedeemForm() {
       </form>
 
       {/* ── Lost your code? ───────────────────────────────────────────────── */}
-      <div style={{ borderTop: '1px solid #111', paddingTop: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={{ borderTop: `1px solid ${tokens.color.surface2}`, paddingTop: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <button
           onClick={() => { setShowResend((v) => !v); setResendError(''); setResendMessage('') }}
-          style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.3)', fontSize: '12px', cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase', textAlign: 'center' }}
+          style={{ background: 'none', border: 'none', color: tokens.color.muted2, fontSize: '12px', cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase', textAlign: 'center' }}
         >
           {showResend ? 'Cancel' : 'Lost your code?'}
         </button>
@@ -210,7 +211,7 @@ export default function RedeemForm() {
 
             {resendError && <p style={errorStyle}>{resendError}</p>}
             {resendMessage && (
-              <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '13px', margin: 0, textAlign: 'center' }}>
+              <p style={{ color: tokens.color.muted, fontSize: '13px', margin: 0, textAlign: 'center' }}>
                 {resendMessage}
               </p>
             )}
@@ -223,9 +224,9 @@ export default function RedeemForm() {
                   width: '100%',
                   padding: '16px',
                   borderRadius: '14px',
-                  border: '1px solid #333',
+                  border: `1px solid ${tokens.color.line2}`,
                   background: 'transparent',
-                  color: resendLoading || !resendEmail.trim() ? 'rgba(255,255,255,0.3)' : '#fff',
+                  color: resendLoading || !resendEmail.trim() ? tokens.color.muted2 : tokens.color.ink,
                   fontSize: '14px',
                   letterSpacing: '0.06em',
                   cursor: resendLoading || !resendEmail.trim() ? 'default' : 'pointer',

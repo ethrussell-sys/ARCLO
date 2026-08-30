@@ -1,10 +1,13 @@
+import Link from 'next/link'
 import RedeemForm from './RedeemForm'
+import { Wordmark } from '@/components/Wordmark'
+import { tokens } from '@/lib/tokens'
 
 export default function DownloadPage() {
   return (
     <main style={{
-      backgroundColor: '#000',
-      color: '#fff',
+      backgroundColor: tokens.color.bg,
+      color: tokens.color.ink,
       minHeight: '100vh',
       display: 'flex',
       flexDirection: 'column',
@@ -22,21 +25,13 @@ export default function DownloadPage() {
 
         {/* Wordmark */}
         <div style={{ textAlign: 'center' }}>
-          <span style={{
-            color: '#525252',
-            fontSize: '12px',
-            letterSpacing: '0.3em',
-            textTransform: 'uppercase',
-            fontFamily: 'var(--font-geist-sans)',
-          }}>
-            S&Oslash;LV
-          </span>
+          <Wordmark size={12} tracking="0.3em" color={tokens.color.muted2} fontFamily={tokens.font.body} />
         </div>
 
         {/* Heading */}
         <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <h1 style={{
-            fontFamily: 'var(--font-bebas)',
+            fontFamily: tokens.font.display,
             fontSize: 'clamp(2.4rem, 10vw, 3.5rem)',
             lineHeight: 1,
             textTransform: 'uppercase',
@@ -46,7 +41,7 @@ export default function DownloadPage() {
             Get your film
           </h1>
           <p style={{
-            color: 'rgba(255,255,255,0.35)',
+            color: tokens.color.muted2,
             fontSize: '14px',
             margin: 0,
             lineHeight: 1.5,
@@ -59,10 +54,10 @@ export default function DownloadPage() {
         <RedeemForm />
 
         {/* Footer link */}
-        <a
+        <Link
           href="/"
           style={{
-            color: 'rgba(255,255,255,0.2)',
+            color: tokens.color.muted2,
             fontSize: '12px',
             letterSpacing: '0.08em',
             textDecoration: 'none',
@@ -71,7 +66,7 @@ export default function DownloadPage() {
           }}
         >
           Explore films
-        </a>
+        </Link>
 
       </div>
     </main>
