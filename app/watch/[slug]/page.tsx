@@ -159,7 +159,7 @@ export default async function WatchPage(props: {
         )}
         {directVideoUrl && (
           <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%' }}>
-            <div style={{ position: 'absolute', inset: 0, borderRadius: '12px', overflow: 'hidden', backgroundColor: '#0a0a0a' }}>
+            <div style={{ position: 'absolute', inset: 0, borderRadius: '12px', overflow: 'hidden', backgroundColor: tokens.color.surface }}>
               <video
                 src={directVideoUrl}
                 autoPlay

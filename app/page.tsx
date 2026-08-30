@@ -41,7 +41,7 @@ export default async function HomePage() {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <h1
             style={{
-              fontFamily: 'var(--font-bebas)',
+              fontFamily: tokens.font.display,
               fontSize: 'clamp(3.5rem, 14vw, 8rem)',
               lineHeight: 0.95,
               textTransform: 'uppercase',

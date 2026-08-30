@@ -68,7 +68,7 @@ export default function TermsPage() {
         <div style={{ marginBottom: '48px' }}>
           <h1
             style={{
-              fontFamily: 'var(--font-bebas)',
+              fontFamily: tokens.font.display,
               fontSize: 'clamp(2.8rem, 8vw, 4rem)',
               textTransform: 'uppercase',
               lineHeight: 1,
