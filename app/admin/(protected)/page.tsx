@@ -1,5 +1,7 @@
 import { serverClient } from '@/lib/supabase'
 import SubmissionsTable from './SubmissionsTable'
+import { Wordmark } from '@/components/Wordmark'
+import { tokens } from '@/lib/tokens'
 
 async function getData() {
   const db = serverClient()
@@ -127,16 +129,16 @@ async function getData() {
 }
 
 const sectionHead: React.CSSProperties = {
-  fontFamily: 'var(--font-bebas)',
+  fontFamily: tokens.font.display,
   fontSize: '28px',
   letterSpacing: '-0.5px',
   textTransform: 'uppercase',
-  color: '#ffffff',
+  color: tokens.color.ink,
   margin: 0,
 }
 
 const th: React.CSSProperties = {
-  color: '#404040',
+  color: tokens.color.muted2,
   fontSize: '11px',
   letterSpacing: '0.12em',
   textTransform: 'uppercase',
@@ -148,14 +150,14 @@ const th: React.CSSProperties = {
 const td: React.CSSProperties = {
   fontSize: '14px',
   padding: '14px 16px 14px 0',
-  borderTop: '1px solid #111',
+  borderTop: `1px solid ${tokens.color.surface2}`,
   verticalAlign: 'middle',
-  color: '#a3a3a3',
+  color: tokens.color.muted,
 }
 
 const divider: React.CSSProperties = {
   border: 'none',
-  borderTop: '1px solid #1a1a1a',
+  borderTop: `1px solid ${tokens.color.line}`,
   margin: '48px 0',
 }
 
@@ -173,14 +175,14 @@ export default async function AdminPage() {
   return (
     <main className="min-h-screen bg-black text-white">
       {/* Header */}
-      <header style={{ borderBottom: '1px solid #111', padding: '20px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <header style={{ borderBottom: `1px solid ${tokens.color.surface2}`, padding: '20px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px' }}>
-          <span style={{ fontFamily: 'var(--font-bebas)', fontSize: '22px', color: '#0A84FF', letterSpacing: '1px' }}>S&Oslash;LV</span>
-          <span style={{ color: '#404040', fontSize: '13px' }}>Admin</span>
+          <Wordmark size={22} tracking="1px" color={tokens.color.blue} fontFamily={tokens.font.display} />
+          <span style={{ color: tokens.color.muted2, fontSize: '13px' }}>Admin</span>
         </div>
         <a
           href="/api/admin/logout"
-          style={{ color: '#525252', fontSize: '13px', textDecoration: 'none' }}
+          style={{ color: tokens.color.muted2, fontSize: '13px', textDecoration: 'none' }}
         >
           Logout
         </a>
@@ -192,7 +194,7 @@ export default async function AdminPage() {
         <section>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', marginBottom: '24px' }}>
             <h2 style={sectionHead}>Submissions</h2>
-            <span style={{ color: '#525252', fontSize: '13px' }}>
+            <span style={{ color: tokens.color.muted2, fontSize: '13px' }}>
               {submissions.length} pending
             </span>
           </div>
@@ -205,13 +207,13 @@ export default async function AdminPage() {
         <section>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '16px', marginBottom: '24px' }}>
             <h2 style={sectionHead}>Purchases</h2>
-            <span style={{ color: '#0A84FF', fontSize: '22px', fontFamily: 'var(--font-bebas)', letterSpacing: '0.5px' }}>
+            <span style={{ color: tokens.color.blue, fontSize: '22px', fontFamily: tokens.font.display, letterSpacing: '0.5px' }}>
               ${totalRevenue.toFixed(2)}
             </span>
           </div>
 
           {purchases.length === 0 ? (
-            <p style={{ color: '#404040', fontSize: '14px' }}>No purchases yet.</p>
+            <p style={{ color: tokens.color.muted2, fontSize: '14px' }}>No purchases yet.</p>
           ) : (
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -235,7 +237,7 @@ export default async function AdminPage() {
                     const dlLimit = row.download_limit ?? 1
                     return (
                       <tr key={p.id}>
-                        <td style={{ ...td, color: '#fff' }}>{film?.title ?? '—'}</td>
+                        <td style={{ ...td, color: tokens.color.ink }}>{film?.title ?? '—'}</td>
                         <td style={td}>{p.email}</td>
                         <td style={td}>{row.utm_source ?? '—'}</td>
                         <td style={td}>{row.utm_medium ?? '—'}</td>
@@ -246,7 +248,7 @@ export default async function AdminPage() {
                         <td style={{ ...td, whiteSpace: 'nowrap' }}>
                           {new Date(p.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </td>
-                        <td style={{ ...td, textAlign: 'right', color: '#fff', fontVariantNumeric: 'tabular-nums' }}>
+                        <td style={{ ...td, textAlign: 'right', color: tokens.color.ink, fontVariantNumeric: 'tabular-nums' }}>
                           ${(film?.price ?? 1.99).toFixed(2)}
                         </td>
                       </tr>
@@ -264,11 +266,11 @@ export default async function AdminPage() {
         <section>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', marginBottom: '24px' }}>
             <h2 style={sectionHead}>Waitlist</h2>
-            <span style={{ color: '#525252', fontSize: '13px' }}>{waitlist.length} signups</span>
+            <span style={{ color: tokens.color.muted2, fontSize: '13px' }}>{waitlist.length} signups</span>
           </div>
 
           {waitlist.length === 0 ? (
-            <p style={{ color: '#404040', fontSize: '14px' }}>No waitlist signups yet.</p>
+            <p style={{ color: tokens.color.muted2, fontSize: '14px' }}>No waitlist signups yet.</p>
           ) : (
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -283,7 +285,7 @@ export default async function AdminPage() {
                 <tbody>
                   {waitlist.map((w) => (
                     <tr key={w.id}>
-                      <td style={{ ...td, color: '#fff' }}>{w.email}</td>
+                      <td style={{ ...td, color: tokens.color.ink }}>{w.email}</td>
                       <td style={td}>{w.country ?? '—'}</td>
                       <td style={td}>{w.film_slug ?? '—'}</td>
                       <td style={{ ...td, whiteSpace: 'nowrap' }}>
@@ -312,12 +314,12 @@ export default async function AdminPage() {
             ].map(({ label, value }) => (
               <div
                 key={label}
-                style={{ background: '#0a0a0a', padding: '24px', display: 'flex', flexDirection: 'column', gap: '6px' }}
+                style={{ background: tokens.color.surface, padding: '24px', display: 'flex', flexDirection: 'column', gap: '6px' }}
               >
-                <span style={{ color: '#ffffff', fontSize: '36px', fontFamily: 'var(--font-bebas)', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
+                <span style={{ color: tokens.color.ink, fontSize: '36px', fontFamily: tokens.font.display, lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
                   {value.toLocaleString()}
                 </span>
-                <span style={{ color: '#525252', fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                <span style={{ color: tokens.color.muted2, fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                   {label}
                 </span>
               </div>
@@ -325,10 +327,10 @@ export default async function AdminPage() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
-            <span style={{ color: '#0A84FF', fontSize: '28px', fontFamily: 'var(--font-bebas)' }}>
+            <span style={{ color: tokens.color.blue, fontSize: '28px', fontFamily: tokens.font.display }}>
               {stats.conversionRate}%
             </span>
-            <span style={{ color: '#525252', fontSize: '13px' }}>
+            <span style={{ color: tokens.color.muted2, fontSize: '13px' }}>
               page view → purchase conversion
             </span>
           </div>
@@ -360,9 +362,9 @@ export default async function AdminPage() {
                   const prev = i === 0 ? null : arr[i - 1].value
                   return (
                     <tr key={label}>
-                      <td style={{ ...td, color: '#fff' }}>{label}</td>
+                      <td style={{ ...td, color: tokens.color.ink }}>{label}</td>
                       <td style={{ ...td, textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{value.toLocaleString()}</td>
-                      <td style={{ ...td, textAlign: 'right', color: prev === null ? '#525252' : value > 0 ? '#0A84FF' : '#404040' }}>
+                      <td style={{ ...td, textAlign: 'right', color: prev === null ? tokens.color.muted2 : value > 0 ? tokens.color.blue : tokens.color.muted2 }}>
                         {prev === null ? '—' : funnelPct(value, prev)}
                       </td>
                     </tr>
@@ -390,9 +392,9 @@ export default async function AdminPage() {
               <tbody>
                 {trailerDropoff.map(({ pct, count }) => (
                   <tr key={pct}>
-                    <td style={{ ...td, color: '#fff' }}>{pct}%</td>
+                    <td style={{ ...td, color: tokens.color.ink }}>{pct}%</td>
                     <td style={{ ...td, textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{count.toLocaleString()}</td>
-                    <td style={{ ...td, textAlign: 'right', color: count > 0 ? '#0A84FF' : '#404040' }}>
+                    <td style={{ ...td, textAlign: 'right', color: count > 0 ? tokens.color.blue : tokens.color.muted2 }}>
                       {funnelPct(count, funnel.trailerPlay)}
                     </td>
                   </tr>
@@ -408,39 +410,39 @@ export default async function AdminPage() {
         <section>
           <h2 style={{ ...sectionHead, marginBottom: '24px' }}>Sources</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '2px', marginBottom: '32px' }}>
-            <div style={{ background: '#0a0a0a', padding: '24px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <span style={{ color: '#fff', fontSize: '36px', fontFamily: 'var(--font-bebas)', lineHeight: 1 }}>
+            <div style={{ background: tokens.color.surface, padding: '24px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <span style={{ color: tokens.color.ink, fontSize: '36px', fontFamily: tokens.font.display, lineHeight: 1 }}>
                 {returnVisitCount.toLocaleString()}
               </span>
-              <span style={{ color: '#525252', fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+              <span style={{ color: tokens.color.muted2, fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                 Return visits
               </span>
             </div>
-            <div style={{ background: '#0a0a0a', padding: '24px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <span style={{ color: '#fff', fontSize: '36px', fontFamily: 'var(--font-bebas)', lineHeight: 1 }}>
+            <div style={{ background: tokens.color.surface, padding: '24px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <span style={{ color: tokens.color.ink, fontSize: '36px', fontFamily: tokens.font.display, lineHeight: 1 }}>
                 {returnConversions.toLocaleString()}
               </span>
-              <span style={{ color: '#525252', fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+              <span style={{ color: tokens.color.muted2, fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                 Multi-visit conversions
               </span>
             </div>
-            <div style={{ background: '#0a0a0a', padding: '24px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <span style={{ color: '#fff', fontSize: '36px', fontFamily: 'var(--font-bebas)', lineHeight: 1 }}>
+            <div style={{ background: tokens.color.surface, padding: '24px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <span style={{ color: tokens.color.ink, fontSize: '36px', fontFamily: tokens.font.display, lineHeight: 1 }}>
                 {avgSecondsToPurchase !== null
                   ? avgSecondsToPurchase < 3600
                     ? `${Math.round(avgSecondsToPurchase / 60)}m`
                     : `${(avgSecondsToPurchase / 3600).toFixed(1)}h`
                   : '—'}
               </span>
-              <span style={{ color: '#525252', fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+              <span style={{ color: tokens.color.muted2, fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                 Avg time to purchase
               </span>
             </div>
-            <div style={{ background: '#0a0a0a', padding: '24px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <span style={{ color: '#fff', fontSize: '36px', fontFamily: 'var(--font-bebas)', lineHeight: 1 }}>
+            <div style={{ background: tokens.color.surface, padding: '24px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <span style={{ color: tokens.color.ink, fontSize: '36px', fontFamily: tokens.font.display, lineHeight: 1 }}>
                 {funnelPct(returnConversions, returnVisitCount)}
               </span>
-              <span style={{ color: '#525252', fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+              <span style={{ color: tokens.color.muted2, fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                 Return visitor conv. rate
               </span>
             </div>
@@ -459,9 +461,9 @@ export default async function AdminPage() {
                 <tbody>
                   {utmRows.map(({ source, purchases: count }) => (
                     <tr key={source}>
-                      <td style={{ ...td, color: '#fff' }}>{source}</td>
+                      <td style={{ ...td, color: tokens.color.ink }}>{source}</td>
                       <td style={{ ...td, textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{count}</td>
-                      <td style={{ ...td, textAlign: 'right', color: '#0A84FF' }}>
+                      <td style={{ ...td, textAlign: 'right', color: tokens.color.blue }}>
                         {funnelPct(count, purchases.length)}
                       </td>
                     </tr>
