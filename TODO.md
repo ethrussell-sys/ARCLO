@@ -21,6 +21,31 @@ The full step-by-step plan (including the optional Stripe CLI webhook
 forwarding route) is in the session transcript — ask Claude to
 reproduce it if needed.
 
+## STEP 3 — NOT BUILT YET
+
+The gated download endpoint: a single endpoint every download routes
+through. Verifies access via either (a) the A2 purchase token
+(already minted by `createOrGetPurchase()` and stashed in
+`sessionStorage` on the success page — currently inert, nothing reads
+it back yet) or (b) an email-verified magic-link session (A3, also not
+built). Runs ONE policy checkpoint (`assertDownloadAllowed` or
+similar) shared by both credential types, mints a fresh presigned S3
+URL per request with a clean filename via `ResponseContentDisposition`,
+and reconciles the existing `download_limit=1`.
+
+**Rule:** purchase-token downloads are always allowed and never
+counted; only email-session re-downloads are ever counted against the
+limit. This is the piece that makes the A2 purchase token actually
+drive a download — right now it's stored but unused.
+
+Uses the atomic `increment_download_count()` Postgres function
+(migration `013_atomic_download_increment.sql`, already applied) for
+the counted path.
+
+**SEQUENCING — do not skip this:** build step 3 ONLY after step 2
+(purchase recording + UTM capture) is verified working end-to-end via
+a real purchase. Do not stack step 3 on top of an unverified step 2.
+
 ## Before pushing A2/A3
 
 - [ ] Add `DOWNLOAD_TOKEN_SECRET` to Vercel env vars (currently
