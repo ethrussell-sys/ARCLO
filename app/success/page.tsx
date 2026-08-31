@@ -6,6 +6,7 @@ import { ID_TO_SLUG } from '@/lib/slug-map'
 import DownloadButton from './DownloadButton'
 import ShareSection from './ShareSection'
 import PurchaseTracker from './PurchaseTracker'
+import { Wordmark } from '@/components/Wordmark'
 import { tokens } from '@/lib/tokens'
 
 async function getOrCreatePurchase(sessionId: string, origin: string) {
@@ -66,14 +67,16 @@ export default async function SuccessPage(props: {
     )
   }
 
-  const { film, email, downloadUrl, slug } = result
+  const { film, email, downloadUrl, slug, purchaseToken } = result
 
   return (
     <>
     <PurchaseTracker filmId={film.id} filmSlug={slug} />
-    <main style={{ backgroundColor: tokens.color.bg, color: tokens.color.ink, minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '80px', paddingBottom: '80px' }}>
+    <main style={{ backgroundColor: tokens.color.bg, color: tokens.color.ink, minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '64px', paddingBottom: '80px' }}>
 
       <div style={{ width: '100%', maxWidth: '384px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '32px', textAlign: 'center', paddingLeft: '20px', paddingRight: '20px' }}>
+        <Wordmark size={12} tracking="0.3em" color={tokens.color.muted2} fontFamily={tokens.font.body} />
+
         <div style={{ width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: tokens.color.blue }}>
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="20 6 9 17 4 12" />
@@ -81,18 +84,27 @@ export default async function SuccessPage(props: {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <h1 style={{ fontSize: '24px', fontWeight: 700, margin: 0 }}>You own it.</h1>
-          <p style={{ color: tokens.color.muted2, fontSize: '14px', lineHeight: 1.6, margin: 0 }}>
-            <span style={{ color: tokens.color.ink, fontWeight: 500 }}>{film.title}</span> is yours forever.
+          <h1 style={{
+            fontFamily: tokens.font.display,
+            fontSize: 'clamp(2.8rem, 12vw, 4rem)',
+            lineHeight: 1,
+            textTransform: 'uppercase',
+            letterSpacing: '-0.5px',
+            margin: 0,
+          }}>
+            Yours. Forever.
+          </h1>
+          <p style={{ color: tokens.color.muted2, fontSize: '14px', lineHeight: 1.6, margin: '8px 0 0' }}>
+            <span style={{ color: tokens.color.ink, fontWeight: 500 }}>{film.title}</span> is yours to keep — no account, no subscription, no catch.
             <br />
             Download link sent to {email}.
           </p>
         </div>
 
-        <DownloadButton url={downloadUrl} title={film.title} />
+        <DownloadButton url={downloadUrl} title={film.title} filmId={film.id} purchaseToken={purchaseToken} />
 
         <p style={{ color: tokens.color.muted2, fontSize: '12px', margin: 0 }}>
-          Link expires in 24 hours. Check your email for a permanent copy.
+          This download link is good for 24 hours. Check your email for a permanent copy.
         </p>
 
         <ShareSection watchUrl={`${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/watch/${slug}`} />
