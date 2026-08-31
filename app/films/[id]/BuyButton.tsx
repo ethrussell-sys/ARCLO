@@ -63,7 +63,7 @@ export default function BuyButton({ filmId, price, title, filmSlug }: Props) {
       const res = await fetch('/api/payment-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ filmId }),
+        body: JSON.stringify({ filmId, ...readUtm() }),
       })
       if (!res.ok) { setPhase('card'); return }
 
@@ -106,6 +106,7 @@ export default function BuyButton({ filmId, price, title, filmSlug }: Props) {
           body: JSON.stringify({
             paymentIntentId,
             email: ev.payerEmail ?? '',
+            ...readUtm(),
           }),
         })
 

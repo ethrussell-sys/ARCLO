@@ -1,11 +1,7 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { getStripe } from '@/lib/stripe'
-import { serverClient } from '@/lib/supabase'
-import { presignedDownloadUrl } from '@/lib/s3'
-import { sendPurchaseConfirmation } from '@/lib/emails/send'
-import { generateRedemptionCode } from '@/lib/redemption-code'
-import { generateDownloadToken } from '@/lib/download-token'
+import { createOrGetPurchase } from '@/lib/purchase'
 import { ID_TO_SLUG } from '@/lib/slug-map'
 import DownloadButton from './DownloadButton'
 import ShareSection from './ShareSection'
@@ -23,52 +19,30 @@ async function getOrCreatePurchase(sessionId: string, origin: string) {
 
   if (!filmId || !email) return null
 
-  const { data: film } = await serverClient()
-    .from('films')
-    .select('id, title, file_key')
-    .eq('id', filmId)
-    .single()
+  // Previously this function ran its own separate upsert with no UTM
+  // fields at all — if it landed before the webhook, that purchase
+  // permanently lost attribution, since the webhook's own idempotency
+  // check would then skip it. Now both paths call the same function
+  // with the same session.metadata source, so whichever lands first
+  // captures UTM correctly.
+  const result = await createOrGetPurchase({
+    filmId,
+    email,
+    paymentIntentId,
+    origin,
+    utm: {
+      utm_source: session.metadata?.utm_source ?? undefined,
+      utm_medium: session.metadata?.utm_medium ?? undefined,
+      utm_campaign: session.metadata?.utm_campaign ?? undefined,
+      utm_content: session.metadata?.utm_content ?? undefined,
+      utm_term: session.metadata?.utm_term ?? undefined,
+    },
+  })
 
-  if (!film) return null
+  if (!result) return null
 
-  // Check if this purchase already exists to avoid resending the email on refresh
-  const { data: existing } = await serverClient()
-    .from('purchases')
-    .select('id, redemption_code, download_token')
-    .eq('stripe_payment_id', paymentIntentId)
-    .maybeSingle()
-
-  const isNew = !existing
-  const redemptionCode = existing?.redemption_code ?? generateRedemptionCode()
-  const downloadToken = existing?.download_token ?? generateDownloadToken()
-  const ownerLink = `${origin}/api/download?token=${downloadToken}`
-
-  const downloadUrl = await presignedDownloadUrl(film.file_key)
-  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-
-  await serverClient()
-    .from('purchases')
-    .upsert(
-      {
-        film_id: film.id,
-        email,
-        stripe_payment_id: paymentIntentId,
-        download_url: downloadUrl,
-        expires_at: expiresAt,
-        redemption_code: redemptionCode,
-        download_token: downloadToken,
-      },
-      { onConflict: 'stripe_payment_id', ignoreDuplicates: false }
-    )
-
-  if (isNew) {
-    sendPurchaseConfirmation({ to: email, filmTitle: film.title, ownerLink, redemptionCode }).catch(
-      (err) => console.error('Purchase email failed:', err)
-    )
-  }
-
-  const slug = ID_TO_SLUG[film.id] ?? film.id
-  return { film, email, downloadUrl, slug }
+  const slug = ID_TO_SLUG[result.film.id] ?? result.film.id
+  return { film: result.film, email, downloadUrl: result.downloadUrl, slug, purchaseToken: result.purchaseToken }
 }
 
 export default async function SuccessPage(props: {
