@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { tokens } from '@/lib/tokens'
 
 type Phase = 'idle' | 'loading' | 'success' | 'error'
 
@@ -25,7 +26,7 @@ export default function WaitlistPanel({ slug, country }: { slug: string; country
   if (phase === 'success') {
     return (
       <p style={{
-        color: 'rgba(255,255,255,0.5)',
+        color: tokens.color.muted,
         fontSize: '14px',
         textAlign: 'center',
         margin: 0,
@@ -39,7 +40,7 @@ export default function WaitlistPanel({ slug, country }: { slug: string; country
   return (
     <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '12px' }}>
       <p style={{
-        color: 'rgba(255,255,255,0.45)',
+        color: tokens.color.muted2,
         fontSize: '13px',
         textAlign: 'center',
         margin: 0,
@@ -57,14 +58,14 @@ export default function WaitlistPanel({ slug, country }: { slug: string; country
           required
           style={{
             width: '100%',
-            background: '#0d0d0d',
-            border: '1px solid #222',
+            background: tokens.color.surface,
+            border: `1px solid ${tokens.color.line}`,
             borderRadius: '12px',
-            color: '#fff',
+            color: tokens.color.ink,
             fontSize: '15px',
             padding: '14px 16px',
             outline: 'none',
-            fontFamily: 'var(--font-geist-sans)',
+            fontFamily: tokens.font.body,
             boxSizing: 'border-box',
           }}
         />
@@ -83,8 +84,8 @@ export default function WaitlistPanel({ slug, country }: { slug: string; country
             padding: '16px',
             borderRadius: '14px',
             border: 'none',
-            backgroundColor: '#0A84FF',
-            color: '#fff',
+            backgroundColor: tokens.color.blue,
+            color: tokens.color.ink,
             fontSize: '15px',
             fontWeight: 600,
             letterSpacing: '0.02em',

@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { getStripe } from '@/lib/stripe'
 import { serverClient } from '@/lib/supabase'
 import { presignedDownloadUrl } from '@/lib/s3'
@@ -9,6 +10,7 @@ import { ID_TO_SLUG } from '@/lib/slug-map'
 import DownloadButton from './DownloadButton'
 import ShareSection from './ShareSection'
 import PurchaseTracker from './PurchaseTracker'
+import { tokens } from '@/lib/tokens'
 
 async function getOrCreatePurchase(sessionId: string, origin: string) {
   const session = await getStripe().checkout.sessions.retrieve(sessionId)
@@ -95,10 +97,10 @@ export default async function SuccessPage(props: {
   return (
     <>
     <PurchaseTracker filmId={film.id} filmSlug={slug} />
-    <main style={{ backgroundColor: '#000', color: '#fff', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '80px', paddingBottom: '80px' }}>
+    <main style={{ backgroundColor: tokens.color.bg, color: tokens.color.ink, minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '80px', paddingBottom: '80px' }}>
 
       <div style={{ width: '100%', maxWidth: '384px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '32px', textAlign: 'center', paddingLeft: '20px', paddingRight: '20px' }}>
-        <div style={{ width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0A84FF' }}>
+        <div style={{ width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: tokens.color.blue }}>
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="20 6 9 17 4 12" />
           </svg>
@@ -106,8 +108,8 @@ export default async function SuccessPage(props: {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <h1 style={{ fontSize: '24px', fontWeight: 700, margin: 0 }}>You own it.</h1>
-          <p style={{ color: '#737373', fontSize: '14px', lineHeight: 1.6, margin: 0 }}>
-            <span style={{ color: '#fff', fontWeight: 500 }}>{film.title}</span> is yours forever.
+          <p style={{ color: tokens.color.muted2, fontSize: '14px', lineHeight: 1.6, margin: 0 }}>
+            <span style={{ color: tokens.color.ink, fontWeight: 500 }}>{film.title}</span> is yours forever.
             <br />
             Download link sent to {email}.
           </p>
@@ -115,16 +117,16 @@ export default async function SuccessPage(props: {
 
         <DownloadButton url={downloadUrl} title={film.title} />
 
-        <p style={{ color: '#404040', fontSize: '12px', margin: 0 }}>
+        <p style={{ color: tokens.color.muted2, fontSize: '12px', margin: 0 }}>
           Link expires in 24 hours. Check your email for a permanent copy.
         </p>
 
         <ShareSection watchUrl={`${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/watch/${slug}`} />
 
-        <a
+        <Link
           href="/"
           style={{
-            color: 'rgba(255,255,255,0.25)',
+            color: tokens.color.muted2,
             fontSize: '12px',
             letterSpacing: '0.08em',
             textDecoration: 'none',
@@ -135,7 +137,7 @@ export default async function SuccessPage(props: {
           }}
         >
           Explore more films
-        </a>
+        </Link>
       </div>
 
     </main>

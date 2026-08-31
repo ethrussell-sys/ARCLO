@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { tokens } from '@/lib/tokens'
 
 type Film = {
   id: string
@@ -13,7 +14,7 @@ type Film = {
 }
 
 const th: React.CSSProperties = {
-  color: '#404040',
+  color: tokens.color.muted2,
   fontSize: '11px',
   letterSpacing: '0.12em',
   textTransform: 'uppercase',
@@ -25,7 +26,7 @@ const th: React.CSSProperties = {
 const td: React.CSSProperties = {
   fontSize: '14px',
   padding: '14px 16px 14px 0',
-  borderTop: '1px solid #111',
+  borderTop: `1px solid ${tokens.color.surface2}`,
   verticalAlign: 'middle',
 }
 
@@ -63,7 +64,7 @@ export default function SubmissionsTable({ films }: { films: Film[] }) {
   }
 
   if (visible.length === 0) {
-    return <p style={{ color: '#404040', fontSize: '14px' }}>No pending submissions.</p>
+    return <p style={{ color: tokens.color.muted2, fontSize: '14px' }}>No pending submissions.</p>
   }
 
   return (
@@ -85,18 +86,18 @@ export default function SubmissionsTable({ films }: { films: Film[] }) {
             const state = loading[film.id]
             return (
               <tr key={film.id}>
-                <td style={{ ...td, color: '#fff', fontWeight: 500 }}>{film.title}</td>
-                <td style={{ ...td, color: '#a3a3a3' }}>{film.director ?? '—'}</td>
-                <td style={{ ...td, color: '#a3a3a3' }}>{film.year ?? '—'}</td>
+                <td style={{ ...td, color: tokens.color.ink, fontWeight: 500 }}>{film.title}</td>
+                <td style={{ ...td, color: tokens.color.muted }}>{film.director ?? '—'}</td>
+                <td style={{ ...td, color: tokens.color.muted }}>{film.year ?? '—'}</td>
                 <td style={{ ...td }}>
                   {film.rating ? (
                     <span style={{
                       fontSize: '11px',
                       fontWeight: 700,
                       letterSpacing: '0.06em',
-                      color: '#fff',
-                      backgroundColor: '#1a1a1a',
-                      border: '1px solid #333',
+                      color: tokens.color.ink,
+                      backgroundColor: tokens.color.line,
+                      border: `1px solid ${tokens.color.line2}`,
                       borderRadius: '4px',
                       padding: '2px 7px',
                     }}>
@@ -104,8 +105,8 @@ export default function SubmissionsTable({ films }: { films: Film[] }) {
                     </span>
                   ) : '—'}
                 </td>
-                <td style={{ ...td, color: '#a3a3a3' }}>{film.contact_email ?? '—'}</td>
-                <td style={{ ...td, color: '#525252', whiteSpace: 'nowrap' }}>
+                <td style={{ ...td, color: tokens.color.muted }}>{film.contact_email ?? '—'}</td>
+                <td style={{ ...td, color: tokens.color.muted2, whiteSpace: 'nowrap' }}>
                   {new Date(film.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </td>
                 <td style={{ ...td, whiteSpace: 'nowrap' }}>
@@ -114,8 +115,8 @@ export default function SubmissionsTable({ films }: { films: Film[] }) {
                       onClick={() => approve(film)}
                       disabled={!!state}
                       style={{
-                        backgroundColor: '#0A84FF',
-                        color: '#fff',
+                        backgroundColor: tokens.color.blue,
+                        color: tokens.color.ink,
                         border: 'none',
                         borderRadius: '8px',
                         padding: '6px 14px',
@@ -132,8 +133,8 @@ export default function SubmissionsTable({ films }: { films: Film[] }) {
                       disabled={!!state}
                       style={{
                         backgroundColor: 'transparent',
-                        color: '#a3a3a3',
-                        border: '1px solid #333',
+                        color: tokens.color.muted,
+                        border: `1px solid ${tokens.color.line2}`,
                         borderRadius: '8px',
                         padding: '6px 14px',
                         fontSize: '13px',

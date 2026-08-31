@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { tokens } from '@/lib/tokens'
 
 type Platform = 'ios' | 'android' | null
 
@@ -51,7 +52,7 @@ export default function AddToHomeScreen() {
   return (
     <div
       className="fixed bottom-28 left-4 right-4 z-40 rounded-2xl p-4 flex items-start gap-3"
-      style={{ backgroundColor: '#111', border: '1px solid #222' }}
+      style={{ backgroundColor: tokens.color.surface2, border: `1px solid ${tokens.color.line}` }}
     >
       <img
         src="/solv-app-icon.png"
@@ -74,7 +75,7 @@ export default function AddToHomeScreen() {
           <button
             onClick={installAndroid}
             className="text-xs font-semibold self-start px-3 py-1.5 rounded-lg mt-0.5"
-            style={{ backgroundColor: '#0A84FF', color: 'white' }}
+            style={{ backgroundColor: tokens.color.blue, color: tokens.color.ink }}
           >
             Add to Home Screen
           </button>

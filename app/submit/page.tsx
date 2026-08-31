@@ -1,6 +1,8 @@
 'use client'
 
 import { useRef, useState, ChangeEvent, FormEvent } from 'react'
+import { Wordmark } from '@/components/Wordmark'
+import { tokens } from '@/lib/tokens'
 
 type Phase = 'form' | 'uploading' | 'saving' | 'error'
 
@@ -12,8 +14,8 @@ type Rating = typeof RATINGS[number]
 const inputStyle: React.CSSProperties = {
   background: 'transparent',
   border: 'none',
-  borderBottom: '1px solid #1c1c1c',
-  color: '#ffffff',
+  borderBottom: `1px solid ${tokens.color.line}`,
+  color: tokens.color.ink,
   fontSize: '16px',
   padding: '12px 0',
   width: '100%',
@@ -23,7 +25,7 @@ const inputStyle: React.CSSProperties = {
 }
 
 const labelStyle: React.CSSProperties = {
-  color: '#525252',
+  color: tokens.color.muted2,
   fontSize: '11px',
   letterSpacing: '0.12em',
   textTransform: 'uppercase',
@@ -125,7 +127,7 @@ export default function SubmitPage() {
       <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6 gap-8">
         <p
           className="text-4xl uppercase tracking-tight"
-          style={{ fontFamily: 'var(--font-bebas)', color: phase === 'saving' ? '#0A84FF' : '#fff' }}
+          style={{ fontFamily: tokens.font.display, color: phase === 'saving' ? tokens.color.blue : tokens.color.ink }}
         >
           {phase === 'saving' ? 'Saving…' : 'Uploading…'}
         </p>
@@ -135,7 +137,7 @@ export default function SubmitPage() {
             <div className="w-full h-px bg-neutral-900 relative overflow-hidden rounded-full">
               <div
                 className="absolute left-0 top-0 h-full transition-all duration-150"
-                style={{ width: `${progress}%`, backgroundColor: '#0A84FF' }}
+                style={{ width: `${progress}%`, backgroundColor: tokens.color.blue }}
               />
             </div>
             <span className="text-neutral-600 text-xs text-right tabular-nums">{progress}%</span>
@@ -152,12 +154,16 @@ export default function SubmitPage() {
 
         {/* Header */}
         <div className="flex flex-col gap-6 mb-16">
-          <span style={{ color: '#0A84FF', fontSize: '12px', letterSpacing: '0.25em', textTransform: 'uppercase', fontWeight: 700 }}>
-            S&Oslash;LV
-          </span>
+          <Wordmark
+            size={12}
+            tracking="0.25em"
+            color={tokens.color.blue}
+            fontFamily={tokens.font.body}
+            style={{ fontWeight: 700 }}
+          />
           <h1
             className="text-6xl uppercase leading-none tracking-tight"
-            style={{ fontFamily: 'var(--font-bebas)' }}
+            style={{ fontFamily: tokens.font.display }}
           >
             Submit your film.
           </h1>
@@ -205,11 +211,11 @@ export default function SubmitPage() {
                 ...inputStyle,
                 resize: 'none',
                 lineHeight: '1.6',
-                borderBottom: '1px solid #1c1c1c',
+                borderBottom: `1px solid ${tokens.color.line}`,
               }}
               placeholder="—"
             />
-            <div className="text-right" style={{ color: descLen > DESC_MAX - 20 ? '#0A84FF' : '#404040', fontSize: '11px', marginTop: '4px' }}>
+            <div className="text-right" style={{ color: descLen > DESC_MAX - 20 ? tokens.color.blue : tokens.color.muted2, fontSize: '11px', marginTop: '4px' }}>
               {descLen}/{DESC_MAX}
             </div>
           </div>
@@ -249,9 +255,9 @@ export default function SubmitPage() {
                   style={{
                     padding: '7px 16px',
                     borderRadius: '6px',
-                    border: `1px solid ${rating === r ? '#0A84FF' : '#2a2a2a'}`,
-                    backgroundColor: rating === r ? '#0A84FF' : 'transparent',
-                    color: rating === r ? '#ffffff' : '#525252',
+                    border: `1px solid ${rating === r ? tokens.color.blue : tokens.color.line2}`,
+                    backgroundColor: rating === r ? tokens.color.blue : 'transparent',
+                    color: rating === r ? tokens.color.ink : tokens.color.muted2,
                     fontSize: '13px',
                     fontWeight: 600,
                     letterSpacing: '0.04em',
@@ -263,7 +269,7 @@ export default function SubmitPage() {
                 </button>
               ))}
             </div>
-            <p style={{ color: '#404040', fontSize: '11px', marginTop: '10px', marginBottom: 0, lineHeight: 1.5 }}>
+            <p style={{ color: tokens.color.muted2, fontSize: '11px', marginTop: '10px', marginBottom: 0, lineHeight: 1.5 }}>
               Self-declared by the filmmaker based on MPA content guidelines.
             </p>
           </div>
@@ -286,7 +292,7 @@ export default function SubmitPage() {
                 ...inputStyle,
                 textAlign: 'left',
                 cursor: 'pointer',
-                color: fileName ? '#ffffff' : '#404040',
+                color: fileName ? tokens.color.ink : tokens.color.muted2,
                 paddingLeft: 0,
               }}
             >
@@ -300,7 +306,7 @@ export default function SubmitPage() {
           )}
 
           {/* Divider */}
-          <div style={{ borderTop: '1px solid #1c1c1c' }} />
+          <div style={{ borderTop: `1px solid ${tokens.color.line}` }} />
 
           {/* Licensing declaration */}
           <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer' }}>
@@ -313,11 +319,11 @@ export default function SubmitPage() {
                 width: '16px',
                 height: '16px',
                 flexShrink: 0,
-                accentColor: '#0A84FF',
+                accentColor: tokens.color.blue,
                 cursor: 'pointer',
               }}
             />
-            <span style={{ color: licensed ? '#a3a3a3' : '#525252', fontSize: '13px', lineHeight: 1.6, transition: 'color 0.15s' }}>
+            <span style={{ color: licensed ? tokens.color.muted : tokens.color.muted2, fontSize: '13px', lineHeight: 1.6, transition: 'color 0.15s' }}>
               I confirm the content rating above is accurate and that all music and other third-party content in this film is licensed for commercial digital distribution.
             </span>
           </label>
@@ -326,7 +332,7 @@ export default function SubmitPage() {
           <button
             type="submit"
             className="w-full py-4 rounded-2xl text-white font-semibold text-base tracking-wide active:scale-95 transition-transform"
-            style={{ backgroundColor: '#0A84FF' }}
+            style={{ backgroundColor: tokens.color.blue }}
           >
             Submit film
           </button>

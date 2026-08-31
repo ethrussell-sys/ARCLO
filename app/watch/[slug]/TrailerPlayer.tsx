@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { track } from '@/lib/track'
+import { tokens } from '@/lib/tokens'
 
 // Minimal YT Player types — avoids requiring @types/youtube
 interface YTPlayer {
@@ -190,7 +191,7 @@ export default function TrailerPlayer({ embedUrl, title, filmId, filmSlug }: Pro
         inset: 0,
         borderRadius: '12px',
         overflow: 'hidden',
-        backgroundColor: '#0a0a0a',
+        backgroundColor: tokens.color.surface,
       }}>
         <div
           ref={containerRef}
@@ -214,7 +215,7 @@ export default function TrailerPlayer({ embedUrl, title, filmId, filmSlug }: Pro
           background: 'rgba(0,0,0,0.55)',
           backdropFilter: 'blur(6px)',
           WebkitBackdropFilter: 'blur(6px)',
-          color: '#fff',
+          color: tokens.color.ink,
           fontSize: '16px',
           display: 'flex',
           alignItems: 'center',

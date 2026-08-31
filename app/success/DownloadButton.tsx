@@ -1,5 +1,7 @@
 'use client'
 
+import { tokens } from '@/lib/tokens'
+
 type Props = { url: string; title: string }
 
 export default function DownloadButton({ url, title }: Props) {
@@ -8,7 +10,7 @@ export default function DownloadButton({ url, title }: Props) {
       href={url}
       download
       className="w-full py-4 rounded-2xl text-white text-lg font-semibold tracking-wide text-center active:scale-95 transition-transform block"
-      style={{ backgroundColor: '#0A84FF' }}
+      style={{ backgroundColor: tokens.color.blue }}
     >
       Download {title}
     </a>

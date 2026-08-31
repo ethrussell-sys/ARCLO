@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { Wordmark } from '@/components/Wordmark'
+import { tokens } from '@/lib/tokens'
 
 export const metadata: Metadata = {
   title: 'Terms of Service — Sølv',
@@ -15,7 +17,7 @@ const section: React.CSSProperties = {
 }
 
 const sectionLabel: React.CSSProperties = {
-  color: '#525252',
+  color: tokens.color.muted2,
   fontSize: '10px',
   letterSpacing: '0.2em',
   textTransform: 'uppercase',
@@ -24,7 +26,7 @@ const sectionLabel: React.CSSProperties = {
 }
 
 const sectionHeading: React.CSSProperties = {
-  color: '#ffffff',
+  color: tokens.color.ink,
   fontSize: '18px',
   fontWeight: 700,
   letterSpacing: '-0.2px',
@@ -33,42 +35,32 @@ const sectionHeading: React.CSSProperties = {
 }
 
 const body: React.CSSProperties = {
-  color: '#737373',
+  color: tokens.color.muted2,
   fontSize: '14px',
   lineHeight: 1.8,
   margin: 0,
 }
 
 const strong: React.CSSProperties = {
-  color: '#a3a3a3',
+  color: tokens.color.muted,
   fontWeight: 500,
 }
 
 const divider: React.CSSProperties = {
   border: 'none',
-  borderTop: '1px solid #141414',
+  borderTop: `1px solid ${tokens.color.line}`,
   margin: 0,
 }
 
 export default function TermsPage() {
   return (
-    <main style={{ backgroundColor: '#000', color: '#fff', minHeight: '100vh' }}>
+    <main style={{ backgroundColor: tokens.color.bg, color: tokens.color.ink, minHeight: '100vh' }}>
       <div style={{ maxWidth: '600px', margin: '0 auto', padding: '64px 24px 96px' }}>
 
         {/* Wordmark */}
         <div style={{ marginBottom: '56px' }}>
-          <Link
-            href="/"
-            style={{
-              color: '#525252',
-              fontSize: '12px',
-              letterSpacing: '0.25em',
-              textTransform: 'uppercase',
-              textDecoration: 'none',
-              fontFamily: 'var(--font-geist-sans)',
-            }}
-          >
-            S&Oslash;LV
+          <Link href="/" style={{ textDecoration: 'none' }}>
+            <Wordmark size={12} tracking="0.25em" color={tokens.color.muted2} fontFamily={tokens.font.body} />
           </Link>
         </div>
 
@@ -76,7 +68,7 @@ export default function TermsPage() {
         <div style={{ marginBottom: '48px' }}>
           <h1
             style={{
-              fontFamily: 'var(--font-bebas)',
+              fontFamily: tokens.font.display,
               fontSize: 'clamp(2.8rem, 8vw, 4rem)',
               textTransform: 'uppercase',
               lineHeight: 1,
@@ -86,7 +78,7 @@ export default function TermsPage() {
           >
             Terms of Service
           </h1>
-          <p style={{ color: '#404040', fontSize: '12px', margin: 0 }}>
+          <p style={{ color: tokens.color.muted2, fontSize: '12px', margin: 0 }}>
             Effective {EFFECTIVE_DATE}
           </p>
         </div>
@@ -125,7 +117,7 @@ export default function TermsPage() {
               Your license includes{' '}
               <span style={strong}>1 download</span>{' '}
               of the film file. If you need to re-download after losing your copy, contact us at{' '}
-              <a href={`mailto:${CONTACT_EMAIL}`} style={{ color: '#0A84FF', textDecoration: 'none' }}>
+              <a href={`mailto:${CONTACT_EMAIL}`} style={{ color: tokens.color.blue, textDecoration: 'none' }}>
                 {CONTACT_EMAIL}
               </a>
               {' '}and we will assist you on a case-by-case basis.
@@ -269,7 +261,7 @@ export default function TermsPage() {
               Questions about these Terms? Email us at{' '}
               <a
                 href={`mailto:${CONTACT_EMAIL}`}
-                style={{ color: '#0A84FF', textDecoration: 'none' }}
+                style={{ color: tokens.color.blue, textDecoration: 'none' }}
               >
                 {CONTACT_EMAIL}
               </a>
@@ -280,10 +272,10 @@ export default function TermsPage() {
         </div>
 
         {/* Footer nav */}
-        <div style={{ marginTop: '80px', paddingTop: '32px', borderTop: '1px solid #111', display: 'flex', gap: '24px' }}>
+        <div style={{ marginTop: '80px', paddingTop: '32px', borderTop: `1px solid ${tokens.color.surface2}`, display: 'flex', gap: '24px' }}>
           <Link
             href="/"
-            style={{ color: '#404040', fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase', textDecoration: 'none' }}
+            style={{ color: tokens.color.muted2, fontSize: '12px', letterSpacing: '0.08em', textTransform: 'uppercase', textDecoration: 'none' }}
           >
             ← Back to films
           </Link>

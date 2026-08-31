@@ -1,6 +1,8 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { isValidToken, ADMIN_COOKIE, LEGACY_ADMIN_COOKIE } from '@/lib/admin-auth'
+import { Wordmark } from '@/components/Wordmark'
+import { tokens } from '@/lib/tokens'
 
 export default async function LoginPage(props: {
   searchParams: Promise<{ error?: string }>
@@ -17,12 +19,10 @@ export default async function LoginPage(props: {
       <div className="w-full max-w-sm flex flex-col gap-10">
 
         <div className="flex flex-col gap-3">
-          <span style={{ color: '#0A84FF', fontSize: '12px', letterSpacing: '0.25em', textTransform: 'uppercase', fontWeight: 700 }}>
-            S&Oslash;LV
-          </span>
+          <Wordmark size={12} tracking="0.25em" color={tokens.color.blue} fontFamily={tokens.font.body} style={{ fontWeight: 700 }} />
           <h1
             className="text-5xl uppercase leading-none tracking-tight"
-            style={{ fontFamily: 'var(--font-bebas)' }}
+            style={{ fontFamily: tokens.font.display }}
           >
             Admin
           </h1>
@@ -30,7 +30,7 @@ export default async function LoginPage(props: {
 
         <form action="/api/admin/login" method="POST" className="flex flex-col gap-8">
           <div>
-            <label style={{ color: '#525252', fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
+            <label style={{ color: tokens.color.muted2, fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
               Password
             </label>
             <input
@@ -41,8 +41,8 @@ export default async function LoginPage(props: {
               style={{
                 background: 'transparent',
                 border: 'none',
-                borderBottom: '1px solid #1c1c1c',
-                color: '#ffffff',
+                borderBottom: `1px solid ${tokens.color.line}`,
+                color: tokens.color.ink,
                 fontSize: '16px',
                 padding: '12px 0',
                 width: '100%',
@@ -58,7 +58,7 @@ export default async function LoginPage(props: {
           <button
             type="submit"
             className="w-full py-4 rounded-2xl text-white font-semibold text-base tracking-wide"
-            style={{ backgroundColor: '#0A84FF' }}
+            style={{ backgroundColor: tokens.color.blue }}
           >
             Enter
           </button>
