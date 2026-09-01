@@ -37,16 +37,26 @@ domain, add the DNS records Resend gives you, wait for verification),
 and the FROM address in `lib/emails/send.ts` is switched over. Not
 started — needs a decision on DNS registrar access.
 
-### Timing note: one slow `/success` load, not the email
+### Timing note: CONFIRMED — Supabase free-tier cold start, not the email, no code fix needed
 
 One `/success` request logged 25.4s server-side against a baseline of
 0.9–2.5s on other requests in the same session. **Not the email
 send** — `lib/purchase.ts` already fires it via `.catch()` without
 `await`, and the server log shows the `/success` response completing
-before the email promise resolved. Likely cause: Supabase free-tier
-cold start after an idle gap — unconfirmed (one data point), should
-resolve once Supabase is off the free tier (see below). Worth
-re-checking if it recurs.
+before the email promise resolved.
+
+Confirmed by warming Supabase with a throwaway query, then running 3
+back-to-back test purchases against the warm DB:
+
+- warmtest1: 2.5s
+- warmtest2: 803ms
+- warmtest3: 811ms
+
+All three land well under the 25.4s cold outlier, two of three
+sub-second — the delay does not recur once Supabase is awake. The
+25.4s one-off was Supabase free-tier auto-pause/cold-start after an
+idle gap. No code fix needed; resolves once Supabase is upgraded off
+the free tier (already on the pre-launch list below).
 
 ## STEP 3 — NOT BUILT YET
 
