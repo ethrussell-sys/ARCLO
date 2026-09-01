@@ -273,8 +273,19 @@ export default function BuyButton({ filmId, price, title, filmSlug }: Props) {
       onClick={handleRegularCheckout}
       onMouseEnter={() => track({ event_type: 'buy_button_hover', film_id: filmId, film_slug: filmSlug })}
       disabled={isProcessing}
-      className="w-full py-4 rounded-2xl text-white text-lg font-semibold tracking-wide active:scale-95 transition-transform disabled:opacity-60"
-      style={{ backgroundColor: tokens.color.blue }}
+      className="solv-buy-btn w-full disabled:opacity-60"
+      style={{
+        height: '52px',
+        borderRadius: '13px',
+        border: 'none',
+        background: 'linear-gradient(180deg, #1a90ff, #0A84FF)',
+        boxShadow: '0 1px 3px rgba(10,132,255,0.4)',
+        color: '#fff',
+        fontWeight: 600,
+        fontSize: '17px',
+        letterSpacing: '-0.01em',
+        cursor: isProcessing ? 'default' : 'pointer',
+      }}
       aria-label={`Buy ${title} for $${price.toFixed(2)}`}
     >
       {isProcessing ? 'Processing…' : `Own it — $${price.toFixed(2)}`}
