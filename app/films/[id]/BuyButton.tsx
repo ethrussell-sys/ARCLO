@@ -275,14 +275,14 @@ export default function BuyButton({ filmId, price, title, filmSlug }: Props) {
       disabled={isProcessing}
       className="solv-buy-btn w-full disabled:opacity-60"
       style={{
-        height: '52px',
+        height: '48px',
         borderRadius: '13px',
         border: 'none',
-        background: 'linear-gradient(180deg, #1a90ff, #0A84FF)',
-        boxShadow: '0 1px 3px rgba(10,132,255,0.4)',
+        backgroundColor: '#0071E3',
+        boxShadow: '0 1px 2px rgba(0,0,0,0.2)',
         color: '#fff',
         fontWeight: 600,
-        fontSize: '17px',
+        fontSize: '16px',
         letterSpacing: '-0.01em',
         cursor: isProcessing ? 'default' : 'pointer',
       }}

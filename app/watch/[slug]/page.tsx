@@ -207,10 +207,19 @@ export default async function WatchPage(props: {
                 background: 'rgba(0,0,0,0.6)',
                 backdropFilter: 'blur(20px) saturate(180%)',
                 WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-                borderTop: '0.5px solid rgba(255,255,255,0.08)',
-                padding: '12px 20px calc(12px + env(safe-area-inset-bottom))',
+                padding: '12px 24px calc(12px + env(safe-area-inset-bottom))',
               }}
             >
+              {/* Fades scrolling content into the bar instead of a hard hairline */}
+              <div style={{
+                position: 'absolute',
+                left: 0,
+                right: 0,
+                top: '-24px',
+                height: '24px',
+                background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.6))',
+                pointerEvents: 'none',
+              }} />
               <div style={{ width: '100%', maxWidth: '480px', margin: '0 auto' }}>
                 <BuyButton filmId={film.id} price={film.price} title={film.title} filmSlug={slug} />
               </div>
