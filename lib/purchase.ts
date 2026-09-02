@@ -1,5 +1,4 @@
 import { serverClient } from '@/lib/supabase'
-import { presignedDownloadUrl } from '@/lib/s3'
 import { sendPurchaseConfirmation } from '@/lib/emails/send'
 import { generateRedemptionCode } from '@/lib/redemption-code'
 import { generateDownloadToken } from '@/lib/download-token'
@@ -30,7 +29,6 @@ type CreatePurchaseResult = {
   film: { id: string; title: string; file_key: string }
   isNew: boolean
   purchaseToken: string
-  downloadUrl: string
 }
 
 // The single place a `purchases` row gets created, called from all three
@@ -90,7 +88,6 @@ export async function createOrGetPurchase({
     return null
   }
 
-  const downloadUrl = await presignedDownloadUrl(film.file_key)
   const purchaseToken = mintPurchaseToken(purchase.id)
 
   if (isNew) {
@@ -100,5 +97,5 @@ export async function createOrGetPurchase({
     )
   }
 
-  return { purchase, film, isNew, purchaseToken, downloadUrl }
+  return { purchase, film, isNew, purchaseToken }
 }

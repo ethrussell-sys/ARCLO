@@ -160,14 +160,40 @@ path, counted path to the limit, atomic denial, shared counter across
 credentials), real file delivery, and a clean, correctly-extensioned
 filename.
 
-## STEP 4 (next) — gate the wallet-pay (Apple/Google Pay) download
+## STEP 4 — BUILT, NEEDS A REAL-DEVICE TEST (2026-09-02)
 
-`BuyButton.tsx`'s wallet-pay flow calls `/api/purchase`, which still
-returns a raw presigned S3 URL straight from `createOrGetPurchase()`
-and downloads it directly — it bypasses the step-3 gate entirely.
-Route it through the same `/api/download` endpoint (presumably via
-the purchase token, same as the success page) instead. The gate isn't
-universal until this is done.
+Wallet-pay (`BuyButton.tsx`) now routes through the same gate as the
+card-checkout path, not a special case: `/api/purchase` no longer
+returns a raw presigned URL at all (the `downloadUrl` field and its
+underlying `presignedDownloadUrl()` call were deleted from
+`createOrGetPurchase()` in `lib/purchase.ts` — this was the actual
+leak, since anyone calling `POST /api/purchase` directly, not just the
+UI, could previously get an ungated, uncounted, infinitely-repeatable
+download URL). `BuyButton.tsx` now reads the same `purchaseToken`
+`/api/purchase` already minted, and both download triggers (the
+auto-download on payment success, and the "Download to device" retry
+button) hit `/api/download?token={purchaseToken}` — identical
+mechanism, uncounted 24h window, same as `DownloadButton.tsx` on the
+success page. The client-side hardcoded `.mp4` filename hint is gone
+too (`triggerDownload` now forces download via `a.download = ''` and
+lets the server's `Content-Disposition` header supply the real,
+correctly-extensioned name). Success overlay copy now matches the
+success page's fallback line ("Download didn't start? Tap to retry —
+or find it anytime in your confirmation email.").
+
+After this, every download entry point goes through
+`/api/download`/`assertDownloadAllowed`: the GET token paths, the POST
+redemption-code path, the success page, `RedeemForm`, and now
+wallet-pay. (A3 magic-link isn't a live bypass — it's stubbed
+`not_implemented`, not a working alternate path.)
+
+**Not yet tested:** Apple Pay/Google Pay can't be triggered in this
+local/sandboxed environment (`pr.canMakePayment()` needs a real wallet
+configured on a real device), so this has only been verified by
+reading the code path and confirming the gate/header behavior
+independently (via `/api/download` itself, already tested in step 3)
+— not by an actual wallet purchase end-to-end. See the real-device
+test item under "Before pushing A2/A3" below.
 
 ## Revisit after the Backblaze + Cloudflare migration
 
@@ -182,6 +208,10 @@ universal until this is done.
 
 ## Before pushing A2/A3
 
+- [ ] Real-device test of the wallet-pay (Apple Pay / Google Pay)
+      download gate (STEP 4) — can't trigger `pr.canMakePayment()`
+      locally, so the gated download flow there has only been verified
+      by reading the code path, not by an actual wallet purchase.
 - [ ] Add `DOWNLOAD_TOKEN_SECRET` to Vercel env vars (currently
       local-only, in `.env.local`)
 - [ ] Remove the stray unused `AWS_S3_BUCKET` env var from Vercel

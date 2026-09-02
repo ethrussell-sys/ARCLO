@@ -18,24 +18,31 @@ type Phase =
   | 'success'
   | 'error'
 
-function triggerDownload(url: string, filename: string) {
+function triggerDownload(url: string) {
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
   if (isIOS) {
     // iOS Safari: open in new tab — user can save to Files via share sheet
     window.open(url, '_blank')
   } else {
+    // Empty download="" forces download behavior without hardcoding a
+    // filename — /api/download's Content-Disposition header supplies the
+    // real, correctly-extensioned name.
     const a = document.createElement('a')
     a.href = url
-    a.download = filename
+    a.download = ''
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
   }
 }
 
+function downloadUrlFor(purchaseToken: string): string {
+  return `/api/download?token=${purchaseToken}`
+}
+
 export default function BuyButton({ filmId, price, title, filmSlug }: Props) {
   const [phase, setPhase] = useState<Phase>('checking')
-  const [downloadUrl, setDownloadUrl] = useState<string | null>(null)
+  const [purchaseToken, setPurchaseToken] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState('')
   const stripeRef = useRef<Stripe | null>(null)
   const prRef = useRef<PaymentRequest | null>(null)
@@ -116,10 +123,10 @@ export default function BuyButton({ filmId, price, title, filmSlug }: Props) {
           return
         }
 
-        const { downloadUrl: url } = await purchaseRes.json()
-        setDownloadUrl(url)
+        const { purchaseToken: token } = await purchaseRes.json()
+        setPurchaseToken(token)
         setPhase('success')
-        triggerDownload(url, `${title}.mp4`)
+        triggerDownload(downloadUrlFor(token))
 
         if (filmSlug) {
           sessionStorage.setItem(`solv_purchased_${filmSlug}`, '1')
@@ -205,17 +212,29 @@ export default function BuyButton({ filmId, price, title, filmSlug }: Props) {
             <p className="text-neutral-400 text-base">{title}</p>
           </div>
 
-          {downloadUrl && (
-            <button
-              onClick={() => triggerDownload(downloadUrl, `${title}.mp4`)}
-              className="w-full max-w-xs py-4 rounded-2xl text-white font-semibold text-base tracking-wide active:scale-95 transition-transform"
-              style={{ backgroundColor: tokens.color.blue }}
-            >
-              Download to device
-            </button>
-          )}
+          {purchaseToken && (
+            <>
+              <button
+                onClick={() => triggerDownload(downloadUrlFor(purchaseToken))}
+                className="w-full max-w-xs py-4 rounded-2xl text-white font-semibold text-base tracking-wide active:scale-95 transition-transform"
+                style={{ backgroundColor: tokens.color.blue }}
+              >
+                Download to device
+              </button>
 
-          <p className="text-neutral-700 text-xs">Download link expires in 24 hours</p>
+              <p className="text-neutral-500 text-xs text-center max-w-xs">
+                Download didn&apos;t start?{' '}
+                <a
+                  href={downloadUrlFor(purchaseToken)}
+                  style={{ color: tokens.color.blue }}
+                  className="underline"
+                >
+                  Tap to retry
+                </a>
+                {' '}— or find it anytime in your confirmation email.
+              </p>
+            </>
+          )}
         </div>
       </div>
     )

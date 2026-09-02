@@ -44,7 +44,6 @@ export async function POST(request: Request) {
   }
 
   return Response.json({
-    downloadUrl: result.downloadUrl,
     filmTitle: result.film.title,
     purchaseToken: result.purchaseToken,
   })
