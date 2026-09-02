@@ -43,7 +43,7 @@ async function getOrCreatePurchase(sessionId: string, origin: string) {
   if (!result) return null
 
   const slug = ID_TO_SLUG[result.film.id] ?? result.film.id
-  return { film: result.film, email, downloadUrl: result.downloadUrl, slug, purchaseToken: result.purchaseToken }
+  return { film: result.film, email, slug, purchaseToken: result.purchaseToken }
 }
 
 export default async function SuccessPage(props: {
@@ -67,7 +67,7 @@ export default async function SuccessPage(props: {
     )
   }
 
-  const { film, email, downloadUrl, slug, purchaseToken } = result
+  const { film, email, slug, purchaseToken } = result
 
   return (
     <>
@@ -92,7 +92,9 @@ export default async function SuccessPage(props: {
             letterSpacing: '-0.5px',
             margin: 0,
           }}>
-            Yours. Forever.
+            Your download.
+            <br />
+            Ready now.
           </h1>
           <p style={{ color: tokens.color.muted2, fontSize: '14px', lineHeight: 1.6, margin: '8px 0 0' }}>
             <span style={{ color: tokens.color.ink, fontWeight: 500 }}>{film.title}</span> is yours to keep — no account, no subscription, no catch.
@@ -101,10 +103,14 @@ export default async function SuccessPage(props: {
           </p>
         </div>
 
-        <DownloadButton url={downloadUrl} title={film.title} filmId={film.id} purchaseToken={purchaseToken} />
+        <DownloadButton title={film.title} filmId={film.id} purchaseToken={purchaseToken} />
 
         <p style={{ color: tokens.color.muted2, fontSize: '12px', margin: 0 }}>
-          This download link is good for 24 hours. Check your email for a permanent copy.
+          Download didn&apos;t start?{' '}
+          <a href={`/api/download?token=${purchaseToken}`} style={{ color: tokens.color.blue, textDecoration: 'underline' }}>
+            Tap to retry
+          </a>
+          {' '}— or find it anytime in your confirmation email.
         </p>
 
         <ShareSection watchUrl={`${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/watch/${slug}`} />
