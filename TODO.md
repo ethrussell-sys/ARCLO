@@ -128,10 +128,37 @@ Supabase between each step:
   proves `download_token` and `redemption_code` genuinely share one
   counter on the row, not separate per-credential allowances.
 
-**Still to confirm:** a real successful download (file actually
-arrives, filename is clean) — blocked by the test film's `file_key`
-being a placeholder (`test-film.mp4`, never uploaded). Needs a film
-pointed at a real S3 object before that last piece can be checked.
+**Real download — VERIFIED (2026-09-02).** *The Last Shore*'s
+`file_key` (`test-film.mp4`) was a placeholder never uploaded to S3, so
+this last piece needed a film with a real object: checked all films'
+`file_key`s with S3 `HeadObject` and found *Beaver Dam Playhouse*
+(`status: live`) backed by a genuine 90,974,310-byte QuickTime file.
+Bought it (test purchase `920c7623-03c5-4144-8260-e3702cc8aab5`) and
+downloaded via the owner-link (`download_token`) GET path:
+
+- `HTTP 200`, `Content-Type: video/quicktime`, `Content-Length:
+  90974310` — no `NoSuchKey`, matches the S3 object exactly.
+- `Content-Disposition: attachment; filename="Beaver Dam
+  Playhouse.mov"; filename*=UTF-8''Beaver%20Dam%20Playhouse.mov` —
+  clean title-based filename, correct extension.
+- Downloaded file confirmed via `file` as a genuine `ISO Media, Apple
+  QuickTime movie` — a real, playable file, not a stub.
+
+**Bug found + fixed along the way:** the filename was hardcoded as
+`${film.title}.mp4` in both branches — Beaver Dam Playhouse's real
+file is `.MOV`, so it would have downloaded mislabeled. Worse, the
+POST (redemption-code) branch passed no filename at all, so those
+downloads got a raw S3 key, not even a wrong extension. Fixed with a
+new `downloadFilename()` helper in `app/api/download/route.ts` that
+derives the extension from `file_key` (lowercased) instead of
+assuming `.mp4` — used by both branches now. Re-verified with a fresh
+download after the fix: same clean 200/QuickTime/byte-count result,
+filename now correctly `.mov`.
+
+**STEP 3 is fully verified end-to-end:** gate logic (uncounted token
+path, counted path to the limit, atomic denial, shared counter across
+credentials), real file delivery, and a clean, correctly-extensioned
+filename.
 
 ## STEP 4 (next) — gate the wallet-pay (Apple/Google Pay) download
 
