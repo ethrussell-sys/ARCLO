@@ -3,6 +3,14 @@ import { presignedDownloadUrl } from '@/lib/s3'
 import { verifyPurchaseToken } from '@/lib/purchase-token'
 import { assertDownloadAllowed } from '@/lib/download-policy'
 
+// file_key's real extension (.MOV, .mp4, whatever the upload actually was)
+// drives the downloaded filename's extension — hardcoding .mp4 would label
+// a QuickTime file as if it were one.
+function downloadFilename(title: string, fileKey: string): string {
+  const ext = fileKey.match(/\.[a-zA-Z0-9]+$/)?.[0].toLowerCase() ?? ''
+  return `${title}${ext}`
+}
+
 // GET ?token= — the single URL shape every download link (old and new)
 // resolves through. A purchase token self-verifies via HMAC and never
 // touches the DB for the allow decision; anything that isn't a valid
@@ -74,7 +82,7 @@ export async function GET(request: Request) {
     return new Response('Film not found', { status: 404 })
   }
 
-  const presigned = await presignedDownloadUrl(film.file_key, `${film.title}.mp4`)
+  const presigned = await presignedDownloadUrl(film.file_key, downloadFilename(film.title, film.file_key))
 
   return Response.redirect(presigned, 302)
 }
@@ -127,7 +135,7 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Film not found.' }, { status: 404 })
   }
 
-  const downloadUrl = await presignedDownloadUrl(film.file_key)
+  const downloadUrl = await presignedDownloadUrl(film.file_key, downloadFilename(film.title, film.file_key))
 
   // Display-only figure computed from the pre-increment read above, not
   // from assertDownloadAllowed's result (the atomic function returns only
