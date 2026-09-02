@@ -219,10 +219,22 @@ test item under "Before pushing A2/A3" below.
       deliberately, since removing a Vercel env var triggers a redeploy
 - [ ] Check the 4 "Needs Attention" env vars flagged in the Vercel
       dashboard
-- [ ] Two known pre-existing logic bugs, left alone (real, but out of
-      scope for this build): `react-hooks/set-state-in-effect` in
-      `app/watch/[slug]/AgeGate.tsx` and
-      `components/AddToHomeScreen.tsx`
+- [x] Two known pre-existing `react-hooks/set-state-in-effect` issues,
+      resolved on their own merits rather than the same fix for both:
+      `AgeGate.tsx` had a real fail-open bug (`visible` defaulted to
+      `false`, so the very first paint on every fresh visit showed the
+      watch page un-gated until the effect corrected it a tick later)
+      — fixed by flipping the default to fail-closed (`useState(true)`)
+      and only hiding the gate once localStorage confirms the visitor
+      already passed it; still trips the lint rule (any direct
+      `setState` in an effect does), but the behavior is now correct
+      and hydration-safe. `AddToHomeScreen.tsx`'s flagged line had no
+      actual defect — moving it to a lazy `useState` initializer (the
+      usual fix) would crash or hydration-mismatch on iOS Safari
+      visitors, since `navigator`/`window` don't exist during this
+      client component's server render. Left the behavior as-is with a
+      documented `eslint-disable-next-line`, so it isn't "fixed" into a
+      worse bug later.
 
 ## Pre-launch (before real traffic)
 
