@@ -13,18 +13,12 @@ export type CredentialKind =
 
 export type DownloadDecision =
   | { allowed: true }
-  | { allowed: false; reason: 'not_found' | 'limit_reached' | 'not_implemented' }
+  | { allowed: false; reason: 'not_found' | 'limit_reached' }
 
 export async function assertDownloadAllowed(
   purchaseId: string,
   credentialKind: CredentialKind
 ): Promise<DownloadDecision> {
-  if (credentialKind === 'magic_link_session') {
-    // A3 (email-magic-link session) isn't built yet — stubbed until the
-    // session-cookie verification flow exists.
-    return { allowed: false, reason: 'not_implemented' }
-  }
-
   if (credentialKind === 'purchase_token') {
     const { data: purchase } = await serverClient()
       .from('purchases')
@@ -36,8 +30,11 @@ export async function assertDownloadAllowed(
     return { allowed: true }
   }
 
-  // download_token and redemption_code both land here: counted, via the
-  // same atomic function, no special-casing between them.
+  // download_token, redemption_code, and magic_link_session all land
+  // here: counted, via the same atomic function, no special-casing
+  // between them. (Callers using magic_link_session are responsible for
+  // verifying the session actually owns this purchaseId before calling —
+  // see app/api/download/route.ts's ?purchaseId= branch.)
   const { data: allowed, error } = await serverClient().rpc('increment_download_count', {
     p_purchase_id: purchaseId,
   })

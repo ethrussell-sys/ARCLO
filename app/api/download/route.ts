@@ -1,6 +1,8 @@
+import { cookies } from 'next/headers'
 import { serverClient } from '@/lib/supabase'
 import { presignedDownloadUrl } from '@/lib/s3'
 import { verifyPurchaseToken } from '@/lib/purchase-token'
+import { verifyMagicSession, MAGIC_SESSION_COOKIE } from '@/lib/magic-link'
 import { assertDownloadAllowed } from '@/lib/download-policy'
 
 // file_key's real extension (.MOV, .mp4, whatever the upload actually was)
@@ -19,49 +21,80 @@ function downloadFilename(title: string, fileKey: string): string {
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const token = searchParams.get('token')
-
-  if (!token) {
-    // A3 (email-magic-link session) isn't built yet — no cookie to read,
-    // so a tokenless request has no credential to evaluate.
-    return Response.json(
-      { error: 'Magic-link downloads are not available yet.' },
-      { status: 501 }
-    )
-  }
-
-  const purchaseToken = verifyPurchaseToken(token)
+  const purchaseIdParam = searchParams.get('purchaseId')
 
   let filmId: string
 
-  if (purchaseToken) {
-    const decision = await assertDownloadAllowed(purchaseToken.purchaseId, 'purchase_token')
-    if (!decision.allowed) {
+  if (token) {
+    const purchaseToken = verifyPurchaseToken(token)
+
+    if (purchaseToken) {
+      const decision = await assertDownloadAllowed(purchaseToken.purchaseId, 'purchase_token')
+      if (!decision.allowed) {
+        return new Response('Not found', { status: 404 })
+      }
+
+      const { data: purchase } = await serverClient()
+        .from('purchases')
+        .select('id, film_id')
+        .eq('id', purchaseToken.purchaseId)
+        .maybeSingle()
+
+      if (!purchase) {
+        return new Response('Not found', { status: 404 })
+      }
+
+      filmId = purchase.film_id
+    } else {
+      const { data: purchase } = await serverClient()
+        .from('purchases')
+        .select('id, film_id')
+        .eq('download_token', token)
+        .maybeSingle()
+
+      if (!purchase) {
+        return new Response('Not found', { status: 404 })
+      }
+
+      const decision = await assertDownloadAllowed(purchase.id, 'download_token')
+      if (!decision.allowed) {
+        return new Response(
+          'Download limit reached. Contact support@solvscreen.com for assistance.',
+          { status: 403 }
+        )
+      }
+
+      filmId = purchase.film_id
+    }
+  } else if (purchaseIdParam) {
+    // A3 magic-link session: the cookie proves "this browser controls this
+    // email" — it is NOT bound to one purchase the way a token/download_token
+    // is by its own value, so purchaseId says which film, and ownership has
+    // to be checked explicitly here. A session for email A must never be
+    // able to pull a purchaseId belonging to email B.
+    const cookieStore = await cookies()
+    const sessionCookie = cookieStore.get(MAGIC_SESSION_COOKIE)?.value
+    const session = sessionCookie ? verifyMagicSession(sessionCookie) : null
+
+    if (!session) {
       return new Response('Not found', { status: 404 })
     }
 
     const { data: purchase } = await serverClient()
       .from('purchases')
-      .select('id, film_id')
-      .eq('id', purchaseToken.purchaseId)
+      .select('id, film_id, email')
+      .eq('id', purchaseIdParam)
       .maybeSingle()
 
-    if (!purchase) {
+    // The ownership check: the purchase must exist AND its email must
+    // match the session's email. Missing purchase and email-mismatch are
+    // deliberately indistinguishable (both 404) — same enumeration-safety
+    // principle as the POST handler below.
+    if (!purchase || purchase.email.toLowerCase() !== session.email.toLowerCase()) {
       return new Response('Not found', { status: 404 })
     }
 
-    filmId = purchase.film_id
-  } else {
-    const { data: purchase } = await serverClient()
-      .from('purchases')
-      .select('id, film_id')
-      .eq('download_token', token)
-      .maybeSingle()
-
-    if (!purchase) {
-      return new Response('Not found', { status: 404 })
-    }
-
-    const decision = await assertDownloadAllowed(purchase.id, 'download_token')
+    const decision = await assertDownloadAllowed(purchase.id, 'magic_link_session')
     if (!decision.allowed) {
       return new Response(
         'Download limit reached. Contact support@solvscreen.com for assistance.',
@@ -70,6 +103,8 @@ export async function GET(request: Request) {
     }
 
     filmId = purchase.film_id
+  } else {
+    return new Response('Missing token or purchaseId', { status: 400 })
   }
 
   const { data: film } = await serverClient()

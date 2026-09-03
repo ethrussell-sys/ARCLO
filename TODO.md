@@ -195,6 +195,76 @@ independently (via `/api/download` itself, already tested in step 3)
 — not by an actual wallet purchase end-to-end. See the real-device
 test item under "Before pushing A2/A3" below.
 
+## A3 — VERIFIED (2026-09-03)
+
+The email-magic-link re-download flow: a returning buyer who lost their
+download link enters their email on `/purchased`, gets a one-click
+link, and can re-download everything that email owns — no account, no
+password.
+
+**Send** (`app/api/magic-link/send/route.ts`) — email in, generate an
+opaque single-use token (DB-backed via `magic_links`, migration `012`,
+*not* a stateless HMAC token like the others, since a link that's
+already been clicked has to actually be revocable), 15-minute
+`expires_at`, email it via a new `sendMagicLink()` template
+(`lib/emails/send.ts`, same visual style as the purchase-confirmation
+email). Anti-enumeration: identical response whether or not the email
+has purchases, whether or not it's been rate-limited, whether or not
+the DB insert or Resend call itself failed — "did I get a link" is
+only answerable by actually checking the inbox. Rate-limit guard:
+skips issuing a new link if an unexpired, unused one already exists
+for that email, reusing the 15-minute TTL itself as the window (caps
+abuse at ~4/email/hour) rather than a separate constant.
+
+**Verify** (`app/api/magic-link/verify/route.ts`) — atomically
+consumes the link token in one conditional `UPDATE ... WHERE token = ?
+AND used_at IS NULL AND expires_at > now()` (same atomicity pattern as
+`increment_download_count`'s `WHERE` clause, no new Postgres function
+needed), then mints a session cookie and redirects, using the same
+`cookies()` + `redirect()` convention `app/api/admin/login/route.ts`
+already established in this codebase.
+
+**Session cookie** (`lib/magic-link.ts`) — stateless HMAC, mirrors
+`lib/purchase-token.ts`'s `value.expires.sig` shape but signs an email
+instead of a purchaseId, 24-hour TTL (so a re-download session doesn't
+expire mid-task). **Bug caught before it shipped:** the mirrored
+`split('.')`-into-3-parts pattern silently assumes the signed value
+never contains a dot — true for a UUID `purchaseId`, false for almost
+any real email address (the domain's dot, at minimum). Fixed by
+popping `sig` and `expires` off the end of the split (both provably
+dot-free: hex digest, decimal timestamp) and rejoining whatever
+remains as the email. Verified with a standalone unit test across
+multi-dot addresses.
+
+**Gate integration** (`lib/download-policy.ts`,
+`app/api/download/route.ts`) — the `magic_link_session` stub is gone;
+it now shares the exact counted `increment_download_count` branch
+`download_token`/`redemption_code` already use, confirmed live by the
+counter moving 0→1. `/api/download` GET gained a `?purchaseId=`
+branch alongside the existing `?token=` one, since a session proves
+"this browser controls this email," not "this browser owns this
+specific film" the way a token does by construction. **Ownership check
+verified airtight, twice, independently:** a valid session for
+`wallettest@example.com` successfully downloaded its own purchase
+(count 0→1), then — same session, unmodified — was denied `404` when
+pointed at a `purchaseId` belonging to `test@test.com`, with that
+purchase's `download_count` confirmed unchanged in the DB (not just a
+denied response after the fact). Missing-purchase and
+email-mismatch are deliberately indistinguishable (both `404`), same
+enumeration-safety principle as the POST redemption-code handler.
+
+**The Purchased screen** (`app/purchased/page.tsx` +
+`MagicLinkForm.tsx`) — server component reads the session cookie and
+branches to: the email-entry form (no/invalid session, with a friendly
+message when arriving from a dead link via `?error=invalid`); the
+owned-films list (one Supabase query using the real
+`purchases.film_id → films.id` FK to embed film titles, no second
+round-trip); or an empty state (valid session, zero purchases). Each
+row links to `/api/download?purchaseId=<id>` with a live "X downloads
+remaining" display, or a "Download limit reached" message in place of
+a dead link once exhausted. All render states verified live against
+real data, not just typechecked.
+
 ## Revisit after the Backblaze + Cloudflare migration
 
 - [ ] `download_limit=3` (migration `014`) was sized around egress cost
@@ -208,6 +278,15 @@ test item under "Before pushing A2/A3" below.
 
 ## Before pushing A2/A3
 
+- [ ] Deprecate `/api/resend-code` now that A3 exists — it does a
+      weaker version of the same job (one most-recent purchase only,
+      via `.limit(1)`, and a real enumeration leak: `404 "No purchase
+      found for that email address"` reveals whether an email has
+      purchased). `/purchased`'s magic-link flow covers every purchase
+      for an email and doesn't leak that signal. Left untouched for
+      this build — `RedeemForm.tsx`'s "Lost your code?" panel still
+      points at it — but worth retiring in favor of pointing that
+      panel at `/purchased` instead.
 - [ ] Real-device test of the wallet-pay (Apple Pay / Google Pay)
       download gate (STEP 4) — can't trigger `pr.canMakePayment()`
       locally, so the gated download flow there has only been verified
